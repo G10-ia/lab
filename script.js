@@ -1652,8 +1652,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function dibujarLineaAPK(texto, x, y, escalaX = 1) {
     ctx.save();
+
+    // Ajuste vertical tipo APK: texto ligeramente "agachado"
+    const ESCALA_Y = 0.980;
+
     ctx.translate(Math.round(x), Math.round(y));
-    ctx.scale(escalaX, 1);
+    ctx.scale(escalaX, ESCALA_Y);
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "left";
     ctx.font = `${TEXT_SIZE}px sans-serif`;
@@ -3360,7 +3364,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           const ESCALA_X_LINEA_1 = 1;
           const ESCALA_X_LINEA_2 = 1;
-          const ESCALA_X_LINEA_3 = 0.98215;
+          const ESCALA_X_LINEA_3 = 0.98217;
 
           const linea1 = "   CREADO POR:  SUTRAN";
           const linea2 = "   COORDENADAS: " + coordenadas;
