@@ -939,6 +939,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   const nombreArchivo = document.getElementById("nombreArchivo");
+  const uploadBox = document.getElementById("uploadBox");
 
   const TEXT_SIZE = 14;
 
@@ -1057,6 +1058,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (nombreArchivo) {
       nombreArchivo.textContent = TEXTO_INICIAL_NOMBRE_ARCHIVO || "Sin archivos seleccionados";
+    }
+
+    if (uploadBox) {
+      uploadBox.classList.remove("upload-box-cargada");
     }
 
     if (inputCoordenadas) {
@@ -1540,10 +1545,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (inputFoto && nombreArchivo) {
     inputFoto.addEventListener("change", function () {
-      if (inputFoto.files && inputFoto.files[0]) {
+      const tieneArchivo = !!(inputFoto.files && inputFoto.files[0]);
+
+      if (tieneArchivo) {
         nombreArchivo.textContent = inputFoto.files[0].name;
       } else {
-        nombreArchivo.textContent = "Sin archivos seleccionados";
+        nombreArchivo.textContent = TEXTO_INICIAL_NOMBRE_ARCHIVO || "Sin archivos seleccionados";
+      }
+
+      if (uploadBox) {
+        uploadBox.classList.toggle("upload-box-cargada", tieneArchivo);
       }
     });
   }
