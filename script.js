@@ -940,7 +940,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const ctx = canvas.getContext("2d");
   const nombreArchivo = document.getElementById("nombreArchivo");
 
-  const TEXT_SIZE = 14;
+  const TEXT_SIZE = 13;
 
   // =========================
   // VALORES INICIALES DEL FORMULARIO
@@ -3360,7 +3360,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           const ESCALA_X_LINEA_1 = 1;
           const ESCALA_X_LINEA_2 = 1;
-          const ESCALA_X_LINEA_3 = 0.982;
+          const ESCALA_X_LINEA_3 = 0.983;
 
           const linea1 = "   CREADO POR:  SUTRAN";
           const linea2 = "   COORDENADAS: " + coordenadas;
