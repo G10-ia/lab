@@ -3360,7 +3360,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           const ESCALA_X_LINEA_1 = 1;
           const ESCALA_X_LINEA_2 = 1;
-          const ESCALA_X_LINEA_3 = 0.983;
+          const ESCALA_X_LINEA_3 = 0.9822;
 
           const linea1 = "   CREADO POR:  SUTRAN";
           const linea2 = "   COORDENADAS: " + coordenadas;
