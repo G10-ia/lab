@@ -2577,7 +2577,7 @@ textarea,
 
 /* Crea el icono visible a la izquierda */
 #btnCancelarSolicitud.cancelar-link::before {
-  content: "âœ•" !important;
+  content: "(✕)" !important;
   display: inline-block !important;
   font-size: 18px !important;
   font-weight: 700 !important;
