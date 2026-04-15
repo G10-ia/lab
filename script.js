@@ -952,18 +952,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const OPCIONES_UNIDAD = {
     camper: {
-      coordenadas: "-6.4621941, -76.4250347",
-      ubicacion: "SAN MARTIN-SAN MARTIN-LA BANDA DE SHILCAYO KM. 611 + 1257"
+      latPrefijo: "-6.48",
+      lngPrefijo: "-76.32",
+      km: "611",
+      plusBase: 1257,
+      ubicacionBase: "SAN MARTIN-SAN MARTIN-LA BANDA DE SHILCAYO KM. 611 + "
     },
     movil_bus: {
-      coordenadas: "-6.4829357, -76.3768869",
-      ubicacion: "SAN MARTIN-SAN MARTIN-MORALES KM. 604 + 362"
+      latPrefijo: "-6.48",
+      lngPrefijo: "-76.37",
+      km: "604",
+      plusBase: 362,
+      ubicacionBase: "SAN MARTIN-SAN MARTIN-MORALES KM. 604 + "
     },
     grupo_ala: {
-      coordenadas: "-6.4904528, -76.3889726",
-      ubicacion: "SAN MARTIN-SAN MARTIN-MORALES KM. 605 + 1227"
+      latPrefijo: "-6.49",
+      lngPrefijo: "-76.38",
+      km: "605",
+      plusBase: 1227,
+      ubicacionBase: "SAN MARTIN-SAN MARTIN-MORALES KM. 605 + "
     }
   };
+
+  function generarDecimalesAleatorios(cantidad) {
+    let salida = "";
+    for (let i = 0; i < cantidad; i++) {
+      salida += Math.floor(Math.random() * 10);
+    }
+    return salida;
+  }
+
+  function generarCoordenadaDesdePrefijo(prefijo) {
+    return `${prefijo}${generarDecimalesAleatorios(5)}`;
+  }
+
+  function generarPlusAleatorio(base) {
+    const baseNumero = Number(base) || 0;
+    const variacion = Math.floor(Math.random() * 9000);
+    return String(baseNumero + variacion).padStart(4, "0");
+  }
 
   // =========================
   // ESTADO GUARDADO SUPABASE
@@ -1027,11 +1054,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!datos) return;
 
     if (inputCoordenadas) {
-      inputCoordenadas.value = datos.coordenadas;
+      const latitud = generarCoordenadaDesdePrefijo(datos.latPrefijo);
+      const longitud = generarCoordenadaDesdePrefijo(datos.lngPrefijo);
+      inputCoordenadas.value = `${latitud}, ${longitud}`;
     }
 
     if (inputUbicacion) {
-      inputUbicacion.value = datos.ubicacion;
+      const plusAleatorio = generarPlusAleatorio(datos.plusBase);
+      inputUbicacion.value = `${datos.ubicacionBase}${plusAleatorio}`;
     }
   }
 
