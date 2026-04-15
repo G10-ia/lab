@@ -1630,20 +1630,30 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
   }
 
-  function limitarTextoSinPuntos(texto, maxAncho) {
+  function medirTextoAPK(texto, escalaX = 1) {
+    ctx.save();
+    ctx.font = `${TEXT_SIZE}px sans-serif`;
+    const ancho = ctx.measureText(String(texto || "")).width * escalaX;
+    ctx.restore();
+    return ancho;
+  }
+
+  function limitarTextoSinPuntos(texto, maxAncho, escalaX = 1) {
     let textoFinal = texto;
 
-    if (ctx.measureText(textoFinal).width <= maxAncho) return textoFinal;
+    if (medirTextoAPK(textoFinal, escalaX) <= maxAncho) return textoFinal;
 
-    while (textoFinal.length > 0 && ctx.measureText(textoFinal).width > maxAncho) {
+    while (textoFinal.length > 0 && medirTextoAPK(textoFinal, escalaX) > maxAncho) {
       textoFinal = textoFinal.slice(0, -1);
     }
 
     return textoFinal;
   }
 
-  function dibujarLineaAPK(texto, x, y) {
+  function dibujarLineaAPK(texto, x, y, escalaX = 1) {
     ctx.save();
+    ctx.translate(Math.round(x), Math.round(y));
+    ctx.scale(escalaX, 1);
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "left";
     ctx.font = `${TEXT_SIZE}px sans-serif`;
@@ -1654,7 +1664,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.shadowOffsetY = 0;
 
     ctx.fillStyle = "#ffffff";
-    ctx.fillText(texto, Math.round(x), Math.round(y));
+    ctx.fillText(texto, 0, 0);
     ctx.restore();
   }
 
@@ -3348,21 +3358,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
           ctx.font = `${TEXT_SIZE}px sans-serif`;
 
+          const ESCALA_X_LINEA_1 = 1;
+          const ESCALA_X_LINEA_2 = 1;
+          const ESCALA_X_LINEA_3 = 0.982;
+
           const linea1 = "   CREADO POR:  SUTRAN";
           const linea2 = "   COORDENADAS: " + coordenadas;
           const linea3Completa = "   " + ubicacion + " - FECHA: " + fecha + " " + hora;
 
           const maxAnchoTexto = canvas.width - 10;
-          const linea3 = limitarTextoSinPuntos(linea3Completa, maxAnchoTexto);
+          const linea3 = limitarTextoSinPuntos(linea3Completa, maxAnchoTexto, ESCALA_X_LINEA_3);
 
           const x = 0;
           const y1 = canvas.height - 40;
           const y2 = canvas.height - 25;
           const y3 = canvas.height - 10;
 
-          dibujarLineaAPK(linea1, x, y1);
-          dibujarLineaAPK(linea2, x, y2);
-          dibujarLineaAPK(linea3, x, y3);
+          dibujarLineaAPK(linea1, x, y1, ESCALA_X_LINEA_1);
+          dibujarLineaAPK(linea2, x, y2, ESCALA_X_LINEA_2);
+          dibujarLineaAPK(linea3, x, y3, ESCALA_X_LINEA_3);
 
           dataUrlGeneradaActual = canvas.toDataURL("image/jpeg", 0.95);
           imagenListaParaGuardar = true;
