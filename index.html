@@ -111,7 +111,6 @@
     <div id="menuAdmin" class="app menu-admin" style="display:none; margin-top:16px;">
       <div class="menu-admin-header">
         <h2 class="menu-admin-titulo">Panel de administración</h2>
-        <p class="menu-admin-subtitulo">Seleccione un módulo</p>
       </div>
 
       <div class="menu-admin-grid">
@@ -131,6 +130,14 @@
           </div>
         </button>
 
+        <button id="btnMenuActividad" type="button" class="tarjeta-menu-admin">
+          <div class="tarjeta-menu-icono" aria-hidden="true">&#128202;</div>
+          <div class="tarjeta-menu-texto">
+            <div class="tarjeta-menu-titulo">Actividad del sistema</div>
+            <div class="tarjeta-menu-descripcion">Ver ingresos y conexiones</div>
+          </div>
+        </button>
+
         <button id="btnMenuUsuarios" type="button" class="tarjeta-menu-admin">
           <div class="tarjeta-menu-icono" aria-hidden="true">&#128101;</div>
           <div class="tarjeta-menu-texto">
@@ -139,11 +146,15 @@
           </div>
         </button>
 
-        <button id="btnMenuActividad" type="button" class="tarjeta-menu-admin">
-          <div class="tarjeta-menu-icono" aria-hidden="true">&#128202;</div>
+        <button id="btnMenuClaves" type="button" class="tarjeta-menu-admin">
+          <div class="tarjeta-menu-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M7 14a5 5 0 1 1 4.9-6H22v2h-2v2h-2v2h-2v2h-2v-2h-1.1A5 5 0 0 1 7 14zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+            </svg>
+          </div>
           <div class="tarjeta-menu-texto">
-            <div class="tarjeta-menu-titulo">Actividad del sistema</div>
-            <div class="tarjeta-menu-descripcion">Ver ingresos y conexiones</div>
+            <div class="tarjeta-menu-titulo">Administración de claves</div>
+            <div class="tarjeta-menu-descripcion">Gestionar contraseñas del sistema</div>
           </div>
         </button>
       </div>
@@ -154,7 +165,8 @@
         <button id="btnVolverMenuDesdeRegistro" type="button" class="btn-volver-menu">&larr; Volver al panel</button>
       </div>
 
-            <div class="aviso-foto-importante">
+
+      <div class="aviso-foto-importante">
         <div class="aviso-foto-importante-icono" aria-hidden="true">&#8505;&#65039;</div>
         <div class="aviso-foto-importante-texto">
           <strong>IMPORTANTE:</strong><br>
@@ -283,7 +295,9 @@
       <div id="envolturaBotonVolverHistorial" class="envoltura-boton-volver">
         <button id="btnVolverMenuDesdeHistorial" type="button" class="btn-volver-menu">&larr; Volver al panel</button>
       </div>
-            <div id="filtrosAdmin" style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
+      <h2 style="margin-top:0;">Panel admin - Historial</h2>
+
+      <div id="filtrosAdmin" style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
         <div class="campo" style="margin:0;">
           <label for="filtroUsuarioAdmin">Buscar por usuario</label>
           <div class="input-icono input-select">
@@ -359,7 +373,9 @@
       <div id="envolturaBotonVolverUsuarios" class="envoltura-boton-volver">
         <button id="btnVolverMenuDesdeUsuarios" type="button" class="btn-volver-menu">&larr; Volver al panel</button>
       </div>
-            <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
+      <h2 style="margin-top:0;">Panel admin - Usuarios</h2>
+
+      <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
         <div class="campo" style="margin:0;">
           <label for="filtroUsuarioPanelAdmin">Buscar usuario</label>
           <div class="input-icono input-select">
@@ -405,7 +421,9 @@
         <button id="btnVolverMenuDesdeActividad" type="button" class="btn-volver-menu">&larr; Volver al panel</button>
       </div>
 
-            <div id="filtrosActividadAdmin" class="filtros-actividad-admin">
+      <h2 style="margin-top:0;">Panel admin - Actividad del sistema</h2>
+
+      <div id="filtrosActividadAdmin" class="filtros-actividad-admin">
         <div class="fila-doble filtros-actividad-admin-fechas">
           <div class="campo" style="margin:0;">
             <label for="filtroFechaDesdeActividadAdmin">Fecha desde</label>
@@ -439,6 +457,44 @@
 
       <div id="listaActividadAdmin"></div>
     </div>
+
+    <!-- PANEL ADMIN CLAVES -->
+    <div id="panelClavesAdmin" class="app" style="display:none; margin-top:16px;">
+      <div id="envolturaBotonVolverClaves" class="envoltura-boton-volver">
+        <button id="btnVolverMenuDesdeClaves" type="button" class="btn-volver-menu">&larr; Volver al panel</button>
+      </div>
+
+      <h2 style="margin-top:0;">Panel admin - Claves</h2>
+
+      <div class="tarjeta-claves-admin-info">
+        <div class="tarjeta-claves-admin-info-titulo">Administrador de claves</div>
+        <div class="tarjeta-claves-admin-info-texto">
+          Solo el admin puede cambiar su propia clave. Las demás claves se muestran en modo lectura cuando están disponibles.
+        </div>
+      </div>
+
+      <div class="tarjeta-claves-admin">
+        <h3>Cambiar clave del administrador</h3>
+        <button id="btnAbrirCambioClaveAdmin" type="button" class="btn-clave-admin-principal">
+          <span class="icono-boton" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M7 14a5 5 0 1 1 4.9-6H22v2h-2v2h-2v2h-2v2h-2v-2h-1.1A5 5 0 0 1 7 14zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+            </svg>
+          </span>
+          <span>Cambiar clave del admin</span>
+        </button>
+      </div>
+
+      <div class="tarjeta-claves-listado">
+        <h3>Claves registradas</h3>
+        <button id="btnRecargarClavesAdmin" type="button" class="btn-claves-secundario">Actualizar lista</button>
+        <p class="texto-claves-ayuda">
+          Solo lectura por ahora. Cuando una clave no puede mostrarse, el sistema indicará que está protegida.
+        </p>
+        <div id="listaClavesAdmin"></div>
+      </div>
+    </div>
+
 
   </div>
 
@@ -524,6 +580,54 @@
       </div>
     </div>
   </div>
+
+  <div id="modalCambioClaveAdmin" class="modal-cambio-clave" style="display:none;">
+    <div class="modal-solicitud-backdrop" id="cerrarModalCambioClaveBackdrop"></div>
+    <div class="modal-cambio-clave-contenido">
+      <div class="modal-cambio-clave-header">
+        <h3>Cambio de clave</h3>
+        <p>Ingrese la nueva clave del admin y confirme antes de guardar.</p>
+      </div>
+
+      <div class="campo-login">
+        <label for="nuevaClaveAdmin">Nueva clave</label>
+        <div class="input-login">
+          <span class="input-login-icono">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-6 7.73V17a1 1 0 0 0 2 0v-1.27a2 2 0 1 0-2 0zM10 8V6a2 2 0 0 1 4 0v2z"/>
+            </svg>
+          </span>
+          <input type="password" id="nuevaClaveAdmin" placeholder="Ingrese nueva clave" autocomplete="new-password">
+        </div>
+      </div>
+
+      <div class="campo-login">
+        <label for="confirmarClaveAdmin">Confirmar nueva clave</label>
+        <div class="input-login">
+          <span class="input-login-icono">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-6 7.73V17a1 1 0 0 0 2 0v-1.27a2 2 0 1 0-2 0zM10 8V6a2 2 0 0 1 4 0v2z"/>
+            </svg>
+          </span>
+          <input type="password" id="confirmarClaveAdmin" placeholder="Confirme nueva clave" autocomplete="new-password">
+        </div>
+      </div>
+
+      <button id="btnGuardarCambioClaveAdmin" type="button" class="btn-login btn-cambio-clave-guardar">
+        <span class="icono-boton" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M17 3H5a2 2 0 0 0-2 2v14l4-4h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/>
+          </svg>
+        </span>
+        <span>Guardar clave</span>
+      </button>
+
+      <button id="btnCancelarCambioClaveAdmin" type="button" class="btn-cambio-clave-cancelar">Cancelar</button>
+
+      <p id="mensajeCambioClaveAdmin" class="mensaje-login mensaje-cambio-clave"></p>
+    </div>
+  </div>
+
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
