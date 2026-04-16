@@ -46,15 +46,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnMenuHistorial = document.getElementById("btnMenuHistorial");
   const btnMenuUsuarios = document.getElementById("btnMenuUsuarios");
   const btnMenuActividad = document.getElementById("btnMenuActividad");
+  const btnMenuClaves = document.getElementById("btnMenuClaves");
   const seccionRegistro = document.getElementById("seccionRegistro");
   const btnVolverMenuDesdeRegistro = document.getElementById("btnVolverMenuDesdeRegistro");
   const btnVolverMenuDesdeHistorial = document.getElementById("btnVolverMenuDesdeHistorial");
   const btnVolverMenuDesdeUsuarios = document.getElementById("btnVolverMenuDesdeUsuarios");
   const btnVolverMenuDesdeActividad = document.getElementById("btnVolverMenuDesdeActividad");
+  const btnVolverMenuDesdeClaves = document.getElementById("btnVolverMenuDesdeClaves");
   const envolturaBotonVolverRegistro = document.getElementById("envolturaBotonVolverRegistro");
   const envolturaBotonVolverHistorial = document.getElementById("envolturaBotonVolverHistorial");
   const envolturaBotonVolverUsuarios = document.getElementById("envolturaBotonVolverUsuarios");
   const envolturaBotonVolverActividad = document.getElementById("envolturaBotonVolverActividad");
+  const envolturaBotonVolverClaves = document.getElementById("envolturaBotonVolverClaves");
 
   // =========================
   // OJO CONTRASENA
@@ -103,12 +106,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const listaSolicitudesAdmin = document.getElementById("listaSolicitudesAdmin");
 
   const panelActividadAdmin = document.getElementById("panelActividadAdmin");
+  const panelClavesAdmin = document.getElementById("panelClavesAdmin");
   const btnRecargarActividadAdmin = document.getElementById("btnRecargarActividadAdmin");
   const resumenActividadAdmin = document.getElementById("resumenActividadAdmin");
   const listaActividadAdmin = document.getElementById("listaActividadAdmin");
   let filtroFechaDesdeActividadAdmin = document.getElementById("filtroFechaDesdeActividadAdmin");
   let filtroFechaHastaActividadAdmin = document.getElementById("filtroFechaHastaActividadAdmin");
   let btnLimpiarActividadAdmin = document.getElementById("btnLimpiarActividadAdmin");
+
+  const btnAbrirCambioClaveAdmin = document.getElementById("btnAbrirCambioClaveAdmin");
+  const modalCambioClaveAdmin = document.getElementById("modalCambioClaveAdmin");
+  const cerrarModalCambioClaveBackdrop = document.getElementById("cerrarModalCambioClaveBackdrop");
+  const btnGuardarClaveAdmin = document.getElementById("btnGuardarClaveAdmin");
+  const btnLimpiarClaveAdmin = document.getElementById("btnLimpiarClaveAdmin");
+  const nuevaClaveAdmin = document.getElementById("nuevaClaveAdmin");
+  const confirmarClaveAdmin = document.getElementById("confirmarClaveAdmin");
+  const mensajeClaveAdmin = document.getElementById("mensajeClaveAdmin");
+  const btnRecargarClavesAdmin = document.getElementById("btnRecargarClavesAdmin");
+  const listaClavesAdmin = document.getElementById("listaClavesAdmin");
 
   // =========================
   // RESUMEN HISTORIAL
@@ -252,6 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let paginaActualUsuariosAdmin = 1;
   let solicitudesAdminCache = [];
   let actividadAdminCache = [];
+  let clavesAdminCache = [];
   let detalleActividadExpandidoUserId = null;
   let historialActividadCache = {};
   let ordenActividadDetalleCache = {};
@@ -291,7 +307,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnCancelarSolicitud) {
       btnCancelarSolicitud.disabled = false;
       btnCancelarSolicitud.style.display = "";
-      btnCancelarSolicitud.textContent = "Cancelar";
+      const iconoCancelar = btnCancelarSolicitud.querySelector(".icono-cancelar");
+      const textoCancelar = btnCancelarSolicitud.querySelector("span:last-child");
+      if (iconoCancelar) iconoCancelar.style.display = "inline-flex";
+      if (textoCancelar) textoCancelar.textContent = "Cancelar";
     }
     if (accionesSolicitudExito) accionesSolicitudExito.style.display = "none";
   }
@@ -320,6 +339,176 @@ document.addEventListener("DOMContentLoaded", () => {
     resumenActividadAdmin.textContent = `Mostrando ${totalActividad || 0} registros de actividad`;
   }
 
+
+  function limpiarFormularioClaveAdmin() {
+    if (nuevaClaveAdmin) nuevaClaveAdmin.value = "";
+    if (confirmarClaveAdmin) confirmarClaveAdmin.value = "";
+    if (mensajeClaveAdmin) {
+      mensajeClaveAdmin.textContent = "";
+      mensajeClaveAdmin.classList.remove("exito");
+    }
+  }
+
+  function mostrarMensajeClaveAdmin(texto, esExito = false) {
+    if (!mensajeClaveAdmin) return;
+    mensajeClaveAdmin.textContent = texto || "";
+    mensajeClaveAdmin.classList.toggle("exito", !!esExito);
+  }
+
+  function abrirModalCambioClaveAdmin() {
+    if (!modalCambioClaveAdmin) return;
+    limpiarFormularioClaveAdmin();
+    modalCambioClaveAdmin.style.display = "flex";
+    document.body.classList.add("modal-abierto");
+    if (nuevaClaveAdmin) nuevaClaveAdmin.focus();
+  }
+
+  function cerrarModalCambioClaveAdmin() {
+    if (!modalCambioClaveAdmin) return;
+    modalCambioClaveAdmin.style.display = "none";
+    document.body.classList.remove("modal-abierto");
+    limpiarFormularioClaveAdmin();
+  }
+
+
+  function obtenerTextoClaveVisible(item) {
+    if (item && item.clave_visible) return item.clave_visible;
+    return "Clave protegida";
+  }
+
+  function construirHtmlClavesAdmin(lista) {
+    return (lista || []).map((item) => {
+      const claveVisible = obtenerTextoClaveVisible(item);
+      const rolTexto = String(item?.rol || "usuario").toLowerCase();
+      const claseTarjeta = rolTexto === "admin" ? "tarjeta-clave-admin-admin" : "tarjeta-clave-admin-usuario";
+      const disponibilidad = item && item.clave_visible
+        ? "Clave visible para consulta de solo lectura"
+        : "Clave protegida por seguridad. Solo se muestra cuando existe una solicitud registrada.";
+
+      return `
+        <div class="tarjeta-clave-admin ${claseTarjeta}">
+          <div class="tarjeta-clave-admin-header">
+            <div class="tarjeta-clave-admin-usuario">${escaparHtml(item.usuario || "-")}</div>
+            <span class="tarjeta-clave-admin-rol">${escaparHtml(item.rol || "usuario")}</span>
+          </div>
+          <div class="campo-clave-solo-lectura">
+            <label>Clave registrada</label>
+            <div class="input-clave-lectura">
+              <input type="text" value="${escaparHtml(claveVisible)}" readonly>
+            </div>
+          </div>
+          <div class="texto-clave-disponibilidad">${escaparHtml(disponibilidad)}</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderizarClavesAdmin() {
+    if (!listaClavesAdmin) return;
+
+    if (!clavesAdminCache.length) {
+      listaClavesAdmin.innerHTML = "<p style='padding:10px;'>No hay claves disponibles para mostrar</p>";
+      return;
+    }
+
+    listaClavesAdmin.innerHTML = construirHtmlClavesAdmin(clavesAdminCache);
+  }
+
+  async function cargarClavesAdmin() {
+    if (!esAdminActual || !listaClavesAdmin) return;
+
+    listaClavesAdmin.innerHTML = "<p style='padding:10px;'>Cargando claves...</p>";
+
+    try {
+      const { data: perfiles, error: errorPerfiles } = await supabase
+        .from("profiles")
+        .select("id, usuario, rol")
+        .order("usuario", { ascending: true });
+
+      if (errorPerfiles) {
+        console.error("Error cargando perfiles para claves:", errorPerfiles);
+        listaClavesAdmin.innerHTML = "<p style='padding:10px;'>No se pudo cargar la lista de claves</p>";
+        return;
+      }
+
+      const { data: solicitudes, error: errorSolicitudes } = await supabase
+        .from("solicitudes_acceso")
+        .select("usuario, clave, estado, updated_at, created_at, auth_user_id")
+        .order("updated_at", { ascending: false });
+
+      if (errorSolicitudes) {
+        console.error("Error cargando solicitudes para claves:", errorSolicitudes);
+        listaClavesAdmin.innerHTML = "<p style='padding:10px;'>No se pudo cargar la lista de claves</p>";
+        return;
+      }
+
+      const mapaClaves = {};
+      (solicitudes || []).forEach((solicitud) => {
+        const claveUsuario = String(solicitud?.usuario || "").trim().toLowerCase();
+        if (!claveUsuario || mapaClaves[claveUsuario]) return;
+        mapaClaves[claveUsuario] = solicitud?.clave || "";
+      });
+
+      clavesAdminCache = (perfiles || []).map((perfil) => ({
+        id: perfil.id,
+        usuario: perfil.usuario || "-",
+        rol: perfil.rol || "usuario",
+        clave_visible: mapaClaves[String(perfil.usuario || "").trim().toLowerCase()] || ""
+      }));
+
+      renderizarClavesAdmin();
+    } catch (err) {
+      console.error("Error general cargando claves:", err);
+      listaClavesAdmin.innerHTML = "<p style='padding:10px;'>Ocurrió un error al cargar la lista de claves</p>";
+    }
+  }
+
+  async function cambiarClaveAdministrador() {
+    if (!esAdminActual) {
+      mostrarMensajeClaveAdmin("Solo el admin puede cambiar la clave", false);
+      return;
+    }
+
+    const nuevaClave = String(nuevaClaveAdmin ? nuevaClaveAdmin.value : "").trim();
+    const confirmarClave = String(confirmarClaveAdmin ? confirmarClaveAdmin.value : "").trim();
+
+    if (!nuevaClave || !confirmarClave) {
+      mostrarMensajeClaveAdmin("Complete ambos campos", false);
+      return;
+    }
+
+    if (nuevaClave.length < 4) {
+      mostrarMensajeClaveAdmin("La clave debe tener al menos 4 caracteres", false);
+      return;
+    }
+
+    if (nuevaClave !== confirmarClave) {
+      mostrarMensajeClaveAdmin("Las claves no coinciden", false);
+      return;
+    }
+
+    mostrarMensajeClaveAdmin("Actualizando clave...", false);
+
+    try {
+      const { error } = await supabase.auth.updateUser({ password: nuevaClave });
+
+      if (error) {
+        console.error("Error cambiando clave del admin:", error);
+        mostrarMensajeClaveAdmin("No se pudo actualizar la clave", false);
+        return;
+      }
+
+      mostrarMensajeClaveAdmin("Clave actualizada correctamente", true);
+      await cargarClavesAdmin();
+      setTimeout(() => {
+        cerrarModalCambioClaveAdmin();
+      }, 900);
+    } catch (err) {
+      console.error("Error general cambiando clave:", err);
+      mostrarMensajeClaveAdmin("Ocurrió un error al cambiar la clave", false);
+    }
+  }
+
   if (toggleClave && claveLogin && iconoOjoAbierto && iconoOjoCerrado) {
     toggleClave.addEventListener("click", () => {
       const mostrando = claveLogin.type === "text";
@@ -341,7 +530,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function ocultarTodosLosBotonesVolver() {
-    [envolturaBotonVolverRegistro, envolturaBotonVolverHistorial, envolturaBotonVolverUsuarios, envolturaBotonVolverActividad].forEach((item) => {
+    [envolturaBotonVolverRegistro, envolturaBotonVolverHistorial, envolturaBotonVolverUsuarios, envolturaBotonVolverActividad, envolturaBotonVolverClaves].forEach((item) => {
       if (!item) return;
       item.style.display = "none";
       item.style.pointerEvents = "none";
@@ -356,6 +545,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (panelAdmin) panelAdmin.style.display = "none";
     if (panelUsuariosAdmin) panelUsuariosAdmin.style.display = "none";
     if (panelActividadAdmin) panelActividadAdmin.style.display = "none";
+    if (panelClavesAdmin) panelClavesAdmin.style.display = "none";
     ocultarTodosLosBotonesVolver();
   }
 
@@ -379,6 +569,10 @@ document.addEventListener("DOMContentLoaded", () => {
       panelActividadAdmin.style.display = seccion === "actividad" ? "block" : "none";
     }
 
+    if (panelClavesAdmin) {
+      panelClavesAdmin.style.display = seccion === "claves" ? "block" : "none";
+    }
+
     ocultarTodosLosBotonesVolver();
 
     if (seccion === "registro" && envolturaBotonVolverRegistro) {
@@ -400,6 +594,11 @@ document.addEventListener("DOMContentLoaded", () => {
       envolturaBotonVolverActividad.style.display = "block";
       envolturaBotonVolverActividad.style.pointerEvents = "auto";
     }
+
+    if (seccion === "claves" && envolturaBotonVolverClaves) {
+      envolturaBotonVolverClaves.style.display = "block";
+      envolturaBotonVolverClaves.style.pointerEvents = "auto";
+    }
   }
 
   function configurarVistaAdminInicial() {
@@ -412,6 +611,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (panelAdmin) panelAdmin.style.display = "none";
       if (panelUsuariosAdmin) panelUsuariosAdmin.style.display = "none";
       if (panelActividadAdmin) panelActividadAdmin.style.display = "none";
+      if (panelClavesAdmin) panelClavesAdmin.style.display = "none";
       ocultarTodosLosBotonesVolver();
     }
   }
@@ -729,12 +929,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (panelAdmin) panelAdmin.style.display = "none";
     if (panelUsuariosAdmin) panelUsuariosAdmin.style.display = "none";
     if (panelActividadAdmin) panelActividadAdmin.style.display = "none";
+    if (panelClavesAdmin) panelClavesAdmin.style.display = "none";
     if (seccionRegistro) seccionRegistro.style.display = "block";
     if (envolturaBotonVolverRegistro) envolturaBotonVolverRegistro.style.display = "none";
 
     if (historialAdmin) historialAdmin.innerHTML = "";
     if (listaUsuariosAdmin) listaUsuariosAdmin.innerHTML = "";
     if (listaActividadAdmin) listaActividadAdmin.innerHTML = "";
+    if (listaClavesAdmin) listaClavesAdmin.innerHTML = "";
 
     limpiarFiltrosAdminUI();
     limpiarBusquedaUsuariosAdminUI();
@@ -744,11 +946,13 @@ document.addEventListener("DOMContentLoaded", () => {
     usuariosAdminOriginalCache = [];
     usuariosAdminCache = [];
     actividadAdminCache = [];
+    clavesAdminCache = [];
     detalleActividadExpandidoUserId = null;
     historialActividadCache = {};
     ordenActividadDetalleCache = {};
     if (filtroFechaDesdeActividadAdmin) filtroFechaDesdeActividadAdmin.value = '';
     if (filtroFechaHastaActividadAdmin) filtroFechaHastaActividadAdmin.value = '';
+    limpiarFormularioClaveAdmin();
     paginaActualAdmin = 1;
     paginaActualUsuariosAdmin = 1;
 
@@ -765,6 +969,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (panelAdmin) panelAdmin.style.display = "none";
     if (panelUsuariosAdmin) panelUsuariosAdmin.style.display = "none";
     if (panelActividadAdmin) panelActividadAdmin.style.display = "none";
+    if (panelClavesAdmin) panelClavesAdmin.style.display = "none";
     if (seccionRegistro) seccionRegistro.style.display = "none";
     if (envolturaBotonVolverRegistro) envolturaBotonVolverRegistro.style.display = "none";
   }
@@ -1465,6 +1670,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  if (btnMenuClaves) {
+    btnMenuClaves.addEventListener("click", async () => {
+      abrirSeccionAdmin("claves");
+      cerrarModalCambioClaveAdmin();
+      await cargarClavesAdmin();
+    });
+  }
+
   if (btnVolverMenuDesdeRegistro) {
     btnVolverMenuDesdeRegistro.addEventListener("click", () => {
       mostrarMenuAdmin();
@@ -1487,6 +1700,44 @@ document.addEventListener("DOMContentLoaded", () => {
     btnVolverMenuDesdeActividad.addEventListener("click", () => {
       detalleActividadExpandidoUserId = null;
       mostrarMenuAdmin();
+    });
+  }
+
+  if (btnVolverMenuDesdeClaves) {
+    btnVolverMenuDesdeClaves.addEventListener("click", () => {
+      cerrarModalCambioClaveAdmin();
+      mostrarMenuAdmin();
+    });
+  }
+
+
+  if (btnAbrirCambioClaveAdmin) {
+    btnAbrirCambioClaveAdmin.addEventListener("click", () => {
+      abrirModalCambioClaveAdmin();
+    });
+  }
+
+  if (cerrarModalCambioClaveBackdrop) {
+    cerrarModalCambioClaveBackdrop.addEventListener("click", () => {
+      cerrarModalCambioClaveAdmin();
+    });
+  }
+
+  if (btnGuardarClaveAdmin) {
+    btnGuardarClaveAdmin.addEventListener("click", async () => {
+      await cambiarClaveAdministrador();
+    });
+  }
+
+  if (btnLimpiarClaveAdmin) {
+    btnLimpiarClaveAdmin.addEventListener("click", () => {
+      cerrarModalCambioClaveAdmin();
+    });
+  }
+
+  if (btnRecargarClavesAdmin) {
+    btnRecargarClavesAdmin.addEventListener("click", async () => {
+      await cargarClavesAdmin();
     });
   }
 
@@ -2260,6 +2511,12 @@ document.addEventListener("DOMContentLoaded", () => {
             <div><strong>Info dispositivo:</strong> ${escaparHtml(textoDeviceInfo)}</div>
             <div><strong>Fecha de vinculacion:</strong> ${escaparHtml(textoFechaVinculacion)}</div>
             <div><strong>Total registros:</strong> ${escaparHtml(usuario.totalRegistros || 0)}</div>
+            <div style="margin-top:10px;">
+              <strong>Clave visible:</strong>
+              <div style="margin-top:6px;">
+                <input type="text" readonly value="${escaparHtml(usuario.clave_visible || "Protegida por seguridad")}" style="width:100%; border:1px solid #d9d9d9; border-radius:10px; padding:10px 12px; background:#f8fafc; color:#4a5665; font-size:14px;">
+              </div>
+            </div>
           </div>
 
           ${bloqueAcciones}
@@ -2604,10 +2861,27 @@ document.addEventListener("DOMContentLoaded", () => {
         mapaInstalaciones[instalacion.user_id] = instalacion;
       });
 
+      const { data: solicitudesClave, error: errorSolicitudesClave } = await supabase
+        .from("solicitudes_acceso")
+        .select("usuario, clave, updated_at")
+        .order("updated_at", { ascending: false });
+
+      if (errorSolicitudesClave) {
+        console.error("Error cargando claves visibles desde solicitudes:", errorSolicitudesClave);
+      }
+
+      const mapaClavesVisibles = {};
+      (solicitudesClave || []).forEach((solicitud) => {
+        const claveUsuario = String(solicitud?.usuario || "").trim().toLowerCase();
+        if (!claveUsuario || mapaClavesVisibles[claveUsuario]) return;
+        mapaClavesVisibles[claveUsuario] = solicitud?.clave || "";
+      });
+
       usuariosAdminOriginalCache = (perfiles || [])
         .filter((perfil) => String(perfil?.rol || "").toLowerCase() !== "admin")
         .map((perfil) => {
           const instalacion = mapaInstalaciones[perfil.id] || null;
+          const claveVisible = mapaClavesVisibles[String(perfil?.usuario || "").trim().toLowerCase()] || "";
 
           return {
             ...perfil,
@@ -2617,7 +2891,8 @@ document.addEventListener("DOMContentLoaded", () => {
             device_info: instalacion ? instalacion.device_info : "",
             fecha_vinculacion: instalacion ? instalacion.created_at : "",
             fecha_vinculacion_texto: instalacion ? formatearCreatedAt(instalacion.created_at) : "-",
-            instalacion_id_tabla: instalacion ? instalacion.id : ""
+            instalacion_id_tabla: instalacion ? instalacion.id : "",
+            clave_visible: claveVisible
           };
         });
 
@@ -3479,3 +3754,4 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarBody();
   }, 1500);
 });
+
