@@ -46,18 +46,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnMenuHistorial = document.getElementById("btnMenuHistorial");
   const btnMenuUsuarios = document.getElementById("btnMenuUsuarios");
   const btnMenuActividad = document.getElementById("btnMenuActividad");
-  const btnMenuClaves = document.getElementById("btnMenuClaves");
   const seccionRegistro = document.getElementById("seccionRegistro");
   const btnVolverMenuDesdeRegistro = document.getElementById("btnVolverMenuDesdeRegistro");
   const btnVolverMenuDesdeHistorial = document.getElementById("btnVolverMenuDesdeHistorial");
   const btnVolverMenuDesdeUsuarios = document.getElementById("btnVolverMenuDesdeUsuarios");
   const btnVolverMenuDesdeActividad = document.getElementById("btnVolverMenuDesdeActividad");
-  const btnVolverMenuDesdeClaves = document.getElementById("btnVolverMenuDesdeClaves");
   const envolturaBotonVolverRegistro = document.getElementById("envolturaBotonVolverRegistro");
   const envolturaBotonVolverHistorial = document.getElementById("envolturaBotonVolverHistorial");
   const envolturaBotonVolverUsuarios = document.getElementById("envolturaBotonVolverUsuarios");
   const envolturaBotonVolverActividad = document.getElementById("envolturaBotonVolverActividad");
-  const envolturaBotonVolverClaves = document.getElementById("envolturaBotonVolverClaves");
 
   // =========================
   // OJO CONTRASENA
@@ -106,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const listaSolicitudesAdmin = document.getElementById("listaSolicitudesAdmin");
 
   const panelActividadAdmin = document.getElementById("panelActividadAdmin");
-  const panelClavesAdmin = document.getElementById("panelClavesAdmin");
   const btnRecargarActividadAdmin = document.getElementById("btnRecargarActividadAdmin");
   const resumenActividadAdmin = document.getElementById("resumenActividadAdmin");
   const listaActividadAdmin = document.getElementById("listaActividadAdmin");
@@ -114,16 +110,20 @@ document.addEventListener("DOMContentLoaded", () => {
   let filtroFechaHastaActividadAdmin = document.getElementById("filtroFechaHastaActividadAdmin");
   let btnLimpiarActividadAdmin = document.getElementById("btnLimpiarActividadAdmin");
 
+  const btnMenuClaves = document.getElementById("btnMenuClaves");
+  const panelClavesAdmin = document.getElementById("panelClavesAdmin");
+  const btnVolverMenuDesdeClaves = document.getElementById("btnVolverMenuDesdeClaves");
+  const envolturaBotonVolverClaves = document.getElementById("envolturaBotonVolverClaves");
   const btnAbrirCambioClaveAdmin = document.getElementById("btnAbrirCambioClaveAdmin");
-  const modalCambioClaveAdmin = document.getElementById("modalCambioClaveAdmin");
-  const cerrarModalCambioClaveBackdrop = document.getElementById("cerrarModalCambioClaveBackdrop");
-  const btnGuardarClaveAdmin = document.getElementById("btnGuardarClaveAdmin");
-  const btnLimpiarClaveAdmin = document.getElementById("btnLimpiarClaveAdmin");
-  const nuevaClaveAdmin = document.getElementById("nuevaClaveAdmin");
-  const confirmarClaveAdmin = document.getElementById("confirmarClaveAdmin");
-  const mensajeClaveAdmin = document.getElementById("mensajeClaveAdmin");
   const btnRecargarClavesAdmin = document.getElementById("btnRecargarClavesAdmin");
   const listaClavesAdmin = document.getElementById("listaClavesAdmin");
+  const modalCambioClaveAdmin = document.getElementById("modalCambioClaveAdmin");
+  const cerrarModalCambioClaveBackdrop = document.getElementById("cerrarModalCambioClaveBackdrop");
+  const btnCancelarCambioClaveAdmin = document.getElementById("btnCancelarCambioClaveAdmin");
+  const btnGuardarCambioClaveAdmin = document.getElementById("btnGuardarCambioClaveAdmin");
+  const nuevaClaveAdmin = document.getElementById("nuevaClaveAdmin");
+  const confirmarClaveAdmin = document.getElementById("confirmarClaveAdmin");
+  const mensajeCambioClaveAdmin = document.getElementById("mensajeCambioClaveAdmin");
 
   // =========================
   // RESUMEN HISTORIAL
@@ -267,10 +267,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let paginaActualUsuariosAdmin = 1;
   let solicitudesAdminCache = [];
   let actividadAdminCache = [];
-  let clavesAdminCache = [];
   let detalleActividadExpandidoUserId = null;
   let historialActividadCache = {};
   let ordenActividadDetalleCache = {};
+  let clavesAdminCache = [];
 
   // =========================
   // INSTALACION / DISPOSITIVO
@@ -307,10 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnCancelarSolicitud) {
       btnCancelarSolicitud.disabled = false;
       btnCancelarSolicitud.style.display = "";
-      const iconoCancelar = btnCancelarSolicitud.querySelector(".icono-cancelar");
-      const textoCancelar = btnCancelarSolicitud.querySelector("span:last-child");
-      if (iconoCancelar) iconoCancelar.style.display = "inline-flex";
-      if (textoCancelar) textoCancelar.textContent = "Cancelar";
+      btnCancelarSolicitud.textContent = "Cancelar";
     }
     if (accionesSolicitudExito) accionesSolicitudExito.style.display = "none";
   }
@@ -339,25 +336,17 @@ document.addEventListener("DOMContentLoaded", () => {
     resumenActividadAdmin.textContent = `Mostrando ${totalActividad || 0} registros de actividad`;
   }
 
-
-  function limpiarFormularioClaveAdmin() {
-    if (nuevaClaveAdmin) nuevaClaveAdmin.value = "";
-    if (confirmarClaveAdmin) confirmarClaveAdmin.value = "";
-    if (mensajeClaveAdmin) {
-      mensajeClaveAdmin.textContent = "";
-      mensajeClaveAdmin.classList.remove("exito");
-    }
-  }
-
-  function mostrarMensajeClaveAdmin(texto, esExito = false) {
-    if (!mensajeClaveAdmin) return;
-    mensajeClaveAdmin.textContent = texto || "";
-    mensajeClaveAdmin.classList.toggle("exito", !!esExito);
+  function limpiarMensajeCambioClaveAdmin() {
+    if (!mensajeCambioClaveAdmin) return;
+    mensajeCambioClaveAdmin.textContent = "";
+    mensajeCambioClaveAdmin.classList.remove("mensaje-solicitud-exito", "mensaje-solicitud-error");
   }
 
   function abrirModalCambioClaveAdmin() {
     if (!modalCambioClaveAdmin) return;
-    limpiarFormularioClaveAdmin();
+    if (nuevaClaveAdmin) nuevaClaveAdmin.value = "";
+    if (confirmarClaveAdmin) confirmarClaveAdmin.value = "";
+    limpiarMensajeCambioClaveAdmin();
     modalCambioClaveAdmin.style.display = "flex";
     document.body.classList.add("modal-abierto");
     if (nuevaClaveAdmin) nuevaClaveAdmin.focus();
@@ -367,63 +356,62 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!modalCambioClaveAdmin) return;
     modalCambioClaveAdmin.style.display = "none";
     document.body.classList.remove("modal-abierto");
-    limpiarFormularioClaveAdmin();
-  }
-
-
-  function obtenerTextoClaveVisible(item) {
-    if (item && item.clave_visible) return item.clave_visible;
-    return "Clave protegida";
+    if (nuevaClaveAdmin) nuevaClaveAdmin.value = "";
+    if (confirmarClaveAdmin) confirmarClaveAdmin.value = "";
+    limpiarMensajeCambioClaveAdmin();
+    if (btnGuardarCambioClaveAdmin) btnGuardarCambioClaveAdmin.disabled = false;
   }
 
   function construirHtmlClavesAdmin(lista) {
-    return (lista || []).map((item) => {
-      const claveVisible = obtenerTextoClaveVisible(item);
-      const rolTexto = String(item?.rol || "usuario").toLowerCase();
-      const claseTarjeta = rolTexto === "admin" ? "tarjeta-clave-admin-admin" : "tarjeta-clave-admin-usuario";
-      const disponibilidad = item && item.clave_visible
-        ? "Clave visible para consulta de solo lectura"
+    if (!Array.isArray(lista) || !lista.length) {
+      return "<p style='padding:10px;'>No hay claves registradas para mostrar</p>";
+    }
+
+    return lista.map((item) => {
+      const esAdmin = String(item.rol || "").toLowerCase() === "admin";
+      const claseTarjeta = esAdmin ? "tarjeta-clave-admin" : "tarjeta-clave-regular";
+      const claseBadge = esAdmin ? "tarjeta-clave-badge-admin" : "tarjeta-clave-badge-usuario";
+      const rolTexto = esAdmin ? "admin" : "usuario";
+      const valorClave = item.clave_visible ? escaparHtml(item.clave_visible) : "Clave protegida";
+      const ayuda = item.clave_visible
+        ? "Clave mostrada desde la última solicitud registrada para este usuario."
         : "Clave protegida por seguridad. Solo se muestra cuando existe una solicitud registrada.";
 
       return `
-        <div class="tarjeta-clave-admin ${claseTarjeta}">
-          <div class="tarjeta-clave-admin-header">
-            <div class="tarjeta-clave-admin-usuario">${escaparHtml(item.usuario || "-")}</div>
-            <span class="tarjeta-clave-admin-rol">${escaparHtml(item.rol || "usuario")}</span>
+        <div class="tarjeta-clave-usuario ${claseTarjeta}">
+          <div class="tarjeta-clave-cabecera">
+            <div class="tarjeta-clave-usuario-nombre">${escaparHtml(item.usuario || "-")}</div>
+            <div class="tarjeta-clave-badge ${claseBadge}">${escaparHtml(rolTexto)}</div>
           </div>
-          <div class="campo-clave-solo-lectura">
-            <label>Clave registrada</label>
-            <div class="input-clave-lectura">
-              <input type="text" value="${escaparHtml(claveVisible)}" readonly>
-            </div>
-          </div>
-          <div class="texto-clave-disponibilidad">${escaparHtml(disponibilidad)}</div>
+          <div class="tarjeta-clave-label">Clave registrada</div>
+          <div class="tarjeta-clave-valor">${valorClave}</div>
+          <div class="tarjeta-clave-ayuda">${escaparHtml(ayuda)}</div>
         </div>
       `;
     }).join("");
   }
 
-  function renderizarClavesAdmin() {
-    if (!listaClavesAdmin) return;
-
-    if (!clavesAdminCache.length) {
-      listaClavesAdmin.innerHTML = "<p style='padding:10px;'>No hay claves disponibles para mostrar</p>";
+  async function cargarClavesAdmin() {
+    if (!esAdminActual) {
+      if (listaClavesAdmin) listaClavesAdmin.innerHTML = "<p style='padding:10px;'>Solo el admin puede ver este modulo</p>";
       return;
     }
 
-    listaClavesAdmin.innerHTML = construirHtmlClavesAdmin(clavesAdminCache);
-  }
-
-  async function cargarClavesAdmin() {
-    if (!esAdminActual || !listaClavesAdmin) return;
+    if (!listaClavesAdmin) return;
 
     listaClavesAdmin.innerHTML = "<p style='padding:10px;'>Cargando claves...</p>";
 
     try {
-      const { data: perfiles, error: errorPerfiles } = await supabase
-        .from("profiles")
-        .select("id, usuario, rol")
-        .order("usuario", { ascending: true });
+      const [{ data: perfiles, error: errorPerfiles }, { data: solicitudes, error: errorSolicitudes }] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id, usuario, rol")
+          .order("usuario", { ascending: true }),
+        supabase
+          .from("solicitudes_acceso")
+          .select("usuario, clave, created_at, updated_at")
+          .order("updated_at", { ascending: false })
+      ]);
 
       if (errorPerfiles) {
         console.error("Error cargando perfiles para claves:", errorPerfiles);
@@ -431,83 +419,99 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const { data: solicitudes, error: errorSolicitudes } = await supabase
-        .from("solicitudes_acceso")
-        .select("usuario, clave, estado, updated_at, created_at, auth_user_id")
-        .order("updated_at", { ascending: false });
-
-      if (errorSolicitudes) {
-        console.error("Error cargando solicitudes para claves:", errorSolicitudes);
-        listaClavesAdmin.innerHTML = "<p style='padding:10px;'>No se pudo cargar la lista de claves</p>";
-        return;
-      }
-
-      const mapaClaves = {};
+      const mapaSolicitudes = new Map();
       (solicitudes || []).forEach((solicitud) => {
-        const claveUsuario = String(solicitud?.usuario || "").trim().toLowerCase();
-        if (!claveUsuario || mapaClaves[claveUsuario]) return;
-        mapaClaves[claveUsuario] = solicitud?.clave || "";
+        const usuarioNormalizado = normalizarUsuarioSolicitud(solicitud.usuario || "");
+        if (!usuarioNormalizado) return;
+        if (!mapaSolicitudes.has(usuarioNormalizado)) {
+          mapaSolicitudes.set(usuarioNormalizado, solicitud);
+        }
       });
 
-      clavesAdminCache = (perfiles || []).map((perfil) => ({
-        id: perfil.id,
-        usuario: perfil.usuario || "-",
-        rol: perfil.rol || "usuario",
-        clave_visible: mapaClaves[String(perfil.usuario || "").trim().toLowerCase()] || ""
-      }));
+      clavesAdminCache = (perfiles || []).map((perfil) => {
+        const llave = normalizarUsuarioSolicitud(perfil.usuario || "");
+        const solicitud = mapaSolicitudes.get(llave);
+        return {
+          usuario: perfil.usuario || "",
+          rol: perfil.rol || "usuario",
+          clave_visible: solicitud?.clave || ""
+        };
+      });
 
-      renderizarClavesAdmin();
-    } catch (err) {
-      console.error("Error general cargando claves:", err);
-      listaClavesAdmin.innerHTML = "<p style='padding:10px;'>Ocurrió un error al cargar la lista de claves</p>";
+      listaClavesAdmin.innerHTML = construirHtmlClavesAdmin(clavesAdminCache);
+    } catch (error) {
+      console.error("Error general cargando claves:", error);
+      listaClavesAdmin.innerHTML = "<p style='padding:10px;'>Ocurrio un error al cargar las claves</p>";
     }
   }
 
-  async function cambiarClaveAdministrador() {
+  async function guardarCambioClaveAdmin() {
     if (!esAdminActual) {
-      mostrarMensajeClaveAdmin("Solo el admin puede cambiar la clave", false);
-      return;
-    }
-
-    const nuevaClave = String(nuevaClaveAdmin ? nuevaClaveAdmin.value : "").trim();
-    const confirmarClave = String(confirmarClaveAdmin ? confirmarClaveAdmin.value : "").trim();
-
-    if (!nuevaClave || !confirmarClave) {
-      mostrarMensajeClaveAdmin("Complete ambos campos", false);
-      return;
-    }
-
-    if (nuevaClave.length < 4) {
-      mostrarMensajeClaveAdmin("La clave debe tener al menos 4 caracteres", false);
-      return;
-    }
-
-    if (nuevaClave !== confirmarClave) {
-      mostrarMensajeClaveAdmin("Las claves no coinciden", false);
-      return;
-    }
-
-    mostrarMensajeClaveAdmin("Actualizando clave...", false);
-
-    try {
-      const { error } = await supabase.auth.updateUser({ password: nuevaClave });
-
-      if (error) {
-        console.error("Error cambiando clave del admin:", error);
-        mostrarMensajeClaveAdmin("No se pudo actualizar la clave", false);
-        return;
+      limpiarMensajeCambioClaveAdmin();
+      if (mensajeCambioClaveAdmin) {
+        mensajeCambioClaveAdmin.textContent = "Solo el admin puede cambiar esta clave";
+        mensajeCambioClaveAdmin.classList.add("mensaje-solicitud-error");
       }
-
-      mostrarMensajeClaveAdmin("Clave actualizada correctamente", true);
-      await cargarClavesAdmin();
-      setTimeout(() => {
-        cerrarModalCambioClaveAdmin();
-      }, 900);
-    } catch (err) {
-      console.error("Error general cambiando clave:", err);
-      mostrarMensajeClaveAdmin("Ocurrió un error al cambiar la clave", false);
+      return;
     }
+
+    const claveNueva = String(nuevaClaveAdmin?.value || "").trim();
+    const claveConfirmada = String(confirmarClaveAdmin?.value || "").trim();
+
+    limpiarMensajeCambioClaveAdmin();
+
+    if (!claveNueva || !claveConfirmada) {
+      if (mensajeCambioClaveAdmin) {
+        mensajeCambioClaveAdmin.textContent = "Complete ambos campos";
+        mensajeCambioClaveAdmin.classList.add("mensaje-solicitud-error");
+      }
+      return;
+    }
+
+    if (claveNueva.length < 4) {
+      if (mensajeCambioClaveAdmin) {
+        mensajeCambioClaveAdmin.textContent = "La clave debe tener al menos 4 caracteres";
+        mensajeCambioClaveAdmin.classList.add("mensaje-solicitud-error");
+      }
+      return;
+    }
+
+    if (claveNueva !== claveConfirmada) {
+      if (mensajeCambioClaveAdmin) {
+        mensajeCambioClaveAdmin.textContent = "Las claves no coinciden";
+        mensajeCambioClaveAdmin.classList.add("mensaje-solicitud-error");
+      }
+      return;
+    }
+
+    const confirmado = window.confirm("Seguro que deseas cambiar la clave del administrador?");
+    if (!confirmado) return;
+
+    if (btnGuardarCambioClaveAdmin) btnGuardarCambioClaveAdmin.disabled = true;
+
+    const { error } = await supabase.auth.updateUser({ password: claveNueva });
+
+    if (error) {
+      console.error("Error actualizando clave del admin:", error);
+      if (mensajeCambioClaveAdmin) {
+        mensajeCambioClaveAdmin.textContent = "No se pudo actualizar la clave";
+        mensajeCambioClaveAdmin.classList.add("mensaje-solicitud-error");
+      }
+      if (btnGuardarCambioClaveAdmin) btnGuardarCambioClaveAdmin.disabled = false;
+      return;
+    }
+
+    if (mensajeCambioClaveAdmin) {
+      mensajeCambioClaveAdmin.textContent = "Clave actualizada correctamente";
+      mensajeCambioClaveAdmin.classList.add("mensaje-solicitud-exito");
+    }
+
+    mostrarMensaje("Clave actualizada correctamente");
+    setTimeout(() => {
+      cerrarModalCambioClaveAdmin();
+    }, 900);
   }
+
 
   if (toggleClave && claveLogin && iconoOjoAbierto && iconoOjoCerrado) {
     toggleClave.addEventListener("click", () => {
@@ -611,7 +615,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (panelAdmin) panelAdmin.style.display = "none";
       if (panelUsuariosAdmin) panelUsuariosAdmin.style.display = "none";
       if (panelActividadAdmin) panelActividadAdmin.style.display = "none";
-      if (panelClavesAdmin) panelClavesAdmin.style.display = "none";
+    if (panelClavesAdmin) panelClavesAdmin.style.display = "none";
       ocultarTodosLosBotonesVolver();
     }
   }
@@ -952,7 +956,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ordenActividadDetalleCache = {};
     if (filtroFechaDesdeActividadAdmin) filtroFechaDesdeActividadAdmin.value = '';
     if (filtroFechaHastaActividadAdmin) filtroFechaHastaActividadAdmin.value = '';
-    limpiarFormularioClaveAdmin();
     paginaActualAdmin = 1;
     paginaActualUsuariosAdmin = 1;
 
@@ -1673,7 +1676,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnMenuClaves) {
     btnMenuClaves.addEventListener("click", async () => {
       abrirSeccionAdmin("claves");
-      cerrarModalCambioClaveAdmin();
       await cargarClavesAdmin();
     });
   }
@@ -1705,11 +1707,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (btnVolverMenuDesdeClaves) {
     btnVolverMenuDesdeClaves.addEventListener("click", () => {
-      cerrarModalCambioClaveAdmin();
       mostrarMenuAdmin();
     });
   }
 
+  if (btnRecargarActividadAdmin) {
+    btnRecargarActividadAdmin.addEventListener("click", async () => {
+      detalleActividadExpandidoUserId = null;
+      await cargarActividadAdmin();
+    });
+  }
+
+  if (btnRecargarClavesAdmin) {
+    btnRecargarClavesAdmin.addEventListener("click", async () => {
+      await cargarClavesAdmin();
+    });
+  }
 
   if (btnAbrirCambioClaveAdmin) {
     btnAbrirCambioClaveAdmin.addEventListener("click", () => {
@@ -1723,30 +1736,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (btnGuardarClaveAdmin) {
-    btnGuardarClaveAdmin.addEventListener("click", async () => {
-      await cambiarClaveAdministrador();
-    });
-  }
-
-  if (btnLimpiarClaveAdmin) {
-    btnLimpiarClaveAdmin.addEventListener("click", () => {
+  if (btnCancelarCambioClaveAdmin) {
+    btnCancelarCambioClaveAdmin.addEventListener("click", () => {
       cerrarModalCambioClaveAdmin();
     });
   }
 
-  if (btnRecargarClavesAdmin) {
-    btnRecargarClavesAdmin.addEventListener("click", async () => {
-      await cargarClavesAdmin();
+  if (btnGuardarCambioClaveAdmin) {
+    btnGuardarCambioClaveAdmin.addEventListener("click", async () => {
+      await guardarCambioClaveAdmin();
     });
   }
 
-  if (btnRecargarActividadAdmin) {
-    btnRecargarActividadAdmin.addEventListener("click", async () => {
-      detalleActividadExpandidoUserId = null;
-      await cargarActividadAdmin();
-    });
-  }
 
   if (filtroFechaDesdeActividadAdmin) {
     filtroFechaDesdeActividadAdmin.addEventListener("change", () => {
@@ -2511,12 +2512,6 @@ document.addEventListener("DOMContentLoaded", () => {
             <div><strong>Info dispositivo:</strong> ${escaparHtml(textoDeviceInfo)}</div>
             <div><strong>Fecha de vinculacion:</strong> ${escaparHtml(textoFechaVinculacion)}</div>
             <div><strong>Total registros:</strong> ${escaparHtml(usuario.totalRegistros || 0)}</div>
-            <div style="margin-top:10px;">
-              <strong>Clave visible:</strong>
-              <div style="margin-top:6px;">
-                <input type="text" readonly value="${escaparHtml(usuario.clave_visible || "Protegida por seguridad")}" style="width:100%; border:1px solid #d9d9d9; border-radius:10px; padding:10px 12px; background:#f8fafc; color:#4a5665; font-size:14px;">
-              </div>
-            </div>
           </div>
 
           ${bloqueAcciones}
@@ -2861,27 +2856,10 @@ document.addEventListener("DOMContentLoaded", () => {
         mapaInstalaciones[instalacion.user_id] = instalacion;
       });
 
-      const { data: solicitudesClave, error: errorSolicitudesClave } = await supabase
-        .from("solicitudes_acceso")
-        .select("usuario, clave, updated_at")
-        .order("updated_at", { ascending: false });
-
-      if (errorSolicitudesClave) {
-        console.error("Error cargando claves visibles desde solicitudes:", errorSolicitudesClave);
-      }
-
-      const mapaClavesVisibles = {};
-      (solicitudesClave || []).forEach((solicitud) => {
-        const claveUsuario = String(solicitud?.usuario || "").trim().toLowerCase();
-        if (!claveUsuario || mapaClavesVisibles[claveUsuario]) return;
-        mapaClavesVisibles[claveUsuario] = solicitud?.clave || "";
-      });
-
       usuariosAdminOriginalCache = (perfiles || [])
         .filter((perfil) => String(perfil?.rol || "").toLowerCase() !== "admin")
         .map((perfil) => {
           const instalacion = mapaInstalaciones[perfil.id] || null;
-          const claveVisible = mapaClavesVisibles[String(perfil?.usuario || "").trim().toLowerCase()] || "";
 
           return {
             ...perfil,
@@ -2891,8 +2869,7 @@ document.addEventListener("DOMContentLoaded", () => {
             device_info: instalacion ? instalacion.device_info : "",
             fecha_vinculacion: instalacion ? instalacion.created_at : "",
             fecha_vinculacion_texto: instalacion ? formatearCreatedAt(instalacion.created_at) : "-",
-            instalacion_id_tabla: instalacion ? instalacion.id : "",
-            clave_visible: claveVisible
+            instalacion_id_tabla: instalacion ? instalacion.id : ""
           };
         });
 
@@ -2953,32 +2930,46 @@ document.addEventListener("DOMContentLoaded", () => {
     const userId = item.user_id;
     const historial = historialActividadCache[userId];
     const abierto = detalleActividadExpandidoUserId === userId;
-    const textoBoton = abierto ? 'Ocultar detalle' : 'Ver detalle';
+    const textoBoton = abierto ? 'Ocultar actividad' : 'Ver actividad';
 
     let detalleHtml = '';
 
     if (abierto) {
       if (historial === null) {
-        detalleHtml = '<div class="actividad-admin-detalle"><div class="actividad-admin-detalle-vacio">Cargando detalle...</div></div>';
+        detalleHtml = '<div class="actividad-admin-detalle"><div class="actividad-admin-detalle-vacio">Cargando actividad...</div></div>';
       } else {
         const historialOrdenado = obtenerHistorialActividadOrdenadoYFiltrado(userId, historial);
         const etiquetaOrden = obtenerEtiquetaOrdenActividad(userId);
-        const bloqueOrden = `
-          <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
-            <button type="button" class="btn-actividad-orden" data-user-id="${escapeHtml(userId)}" style="height:auto; min-height:40px; padding:10px 14px; border-radius:14px; background:#f3f4f6; color:#111827; box-shadow:0 4px 12px rgba(0,0,0,0.08); font-size:14px; font-weight:700;">${etiquetaOrden}</button>
+        const bloqueCabecera = `
+          <div class="actividad-admin-detalle-cabecera">
+            <div class="actividad-admin-detalle-titulo">Historial de actividad</div>
+            <button type="button" class="btn-actividad-orden" data-user-id="${escapeHtml(userId)}">${etiquetaOrden}</button>
           </div>
         `;
 
         if (!historialOrdenado.length) {
-          detalleHtml = `<div class="actividad-admin-detalle">${bloqueOrden}<div class="actividad-admin-detalle-vacio">No hay ingresos detallados registrados</div></div>`;
+          detalleHtml = `<div class="actividad-admin-detalle">${bloqueCabecera}<div class="actividad-admin-detalle-vacio">No hay ingresos detallados registrados</div></div>`;
         } else {
           detalleHtml = `
             <div class="actividad-admin-detalle">
-              ${bloqueOrden}
+              ${bloqueCabecera}
               <div class="actividad-admin-detalle-lista">
                 ${historialOrdenado.map((fila) => {
                   const fechaHora = fila.fecha_hora_ingreso ? formatearCreatedAt(fila.fecha_hora_ingreso) : '-';
-                  return `<div class="actividad-admin-detalle-item">- ${fechaHora}</div>`;
+                  return `
+                    <div class="actividad-evento actividad-evento-ingreso">
+                      <div class="actividad-evento-linea"></div>
+                      <div class="actividad-evento-icono">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                        </svg>
+                      </div>
+                      <div class="actividad-evento-contenido">
+                        <div class="actividad-evento-titulo">Ingreso exitoso</div>
+                        <div class="actividad-evento-fecha">${fechaHora}</div>
+                      </div>
+                    </div>
+                  `;
                 }).join('')}
               </div>
             </div>
@@ -3050,20 +3041,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     listaActividadAdmin.innerHTML = actividadFiltrada.map((item) => {
-      const fechaIngreso = item.fecha_ingreso ? formatearFecha(item.fecha_ingreso) : '-';
-      const horaIngreso = item.hora_ingreso || '-';
+      const usuario = escapeHtml(item.usuario || '-');
       const ultimaConexion = item.ultima_conexion ? formatearCreatedAt(item.ultima_conexion) : '-';
+      const totalIngresos = Number(item.contador_ingresos || 0);
+      const etiquetaIngresos = totalIngresos === 1 ? '1 ingreso' : `${totalIngresos} ingresos`;
 
       return `
         <div class="tarjeta-actividad-admin">
-          <div class="tarjeta-actividad-admin-texto">
-            <div class="fila-info"><strong>Usuario:</strong> ${escapeHtml(item.usuario || '-')}</div>
-            <div class="fila-info"><strong>Fecha de ingreso:</strong> ${fechaIngreso}</div>
-            <div class="fila-info"><strong>Hora de ingreso:</strong> ${horaIngreso}</div>
-            <div class="fila-info"><strong>Ultima conexion:</strong> ${ultimaConexion}</div>
-            <div class="fila-info"><strong>Ingresos:</strong> ${Number(item.contador_ingresos || 0)}</div>
-            ${obtenerHtmlDetalleActividad(item)}
+          <div class="tarjeta-actividad-admin-header">
+            <div class="tarjeta-actividad-admin-usuario">${usuario}</div>
+            <div class="tarjeta-actividad-admin-pill tarjeta-actividad-admin-pill-exito">Activo</div>
           </div>
+
+          <div class="tarjeta-actividad-admin-resumen">
+            <div class="tarjeta-actividad-admin-dato">
+              <div class="tarjeta-actividad-admin-etiqueta">Último ingreso:</div>
+              <div class="tarjeta-actividad-admin-valor">${ultimaConexion}</div>
+            </div>
+            <div class="tarjeta-actividad-admin-dato">
+              <div class="tarjeta-actividad-admin-etiqueta">Total ingresos:</div>
+              <div class="tarjeta-actividad-admin-valor">${etiquetaIngresos}</div>
+            </div>
+          </div>
+
+          ${obtenerHtmlDetalleActividad(item)}
         </div>
       `;
     }).join('');
@@ -3754,4 +3755,3 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarBody();
   }, 1500);
 });
-
