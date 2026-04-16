@@ -111,7 +111,7 @@
     <div id="menuAdmin" class="app menu-admin" style="display:none; margin-top:16px;">
       <div class="menu-admin-header">
         <h2 class="menu-admin-titulo">Panel de administración</h2>
-        <p class="menu-admin-subtitulo">Seleccione un módulo</p>
+        
       </div>
 
       <div class="menu-admin-grid">
@@ -144,6 +144,18 @@
           <div class="tarjeta-menu-texto">
             <div class="tarjeta-menu-titulo">Actividad del sistema</div>
             <div class="tarjeta-menu-descripcion">Ver ingresos y conexiones</div>
+          </div>
+        </button>
+
+        <button id="btnMenuClaves" type="button" class="tarjeta-menu-admin tarjeta-menu-claves-admin">
+          <div class="tarjeta-menu-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M14 3a5 5 0 0 0-4.58 7.01L3 16.41V21h4.59l1-1H11v-2h2v-2h2.59l1.4-1.4A5 5 0 1 0 14 3zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+            </svg>
+          </div>
+          <div class="tarjeta-menu-texto">
+            <div class="tarjeta-menu-titulo">Administración de claves</div>
+            <div class="tarjeta-menu-descripcion">Gestionar claves del sistema</div>
           </div>
         </button>
       </div>
@@ -405,7 +417,95 @@
       </div>
     </div>
 
+    <!-- PANEL ADMIN CLAVES -->
+    <div id="panelClavesAdmin" class="app" style="display:none; margin-top:16px;">
+      <div id="envolturaBotonVolverClaves" class="envoltura-boton-volver">
+        <button id="btnVolverMenuDesdeClaves" type="button" class="btn-volver-menu">&larr; Volver al panel</button>
+      </div>
+
+      <h2 style="margin-top:0;">Panel admin - Claves</h2>
+
+      <div class="panel-claves-intro">
+        <div class="panel-claves-intro-titulo">Administrador de claves</div>
+        <div class="panel-claves-intro-texto">Solo el admin puede cambiar su propia clave. Las demás claves se muestran en modo lectura cuando el sistema permite verlas.</div>
+      </div>
+
+      <div class="bloque-claves-admin">
+        <div class="bloque-claves-admin-cabecera">
+          <h3>Cambiar clave del administrador</h3>
+        </div>
+
+        <div class="panel-claves-accion-principal">
+          <button id="btnAbrirCambioClaveAdmin" type="button" class="btn-clave-admin-abrir">
+            <span class="icono-boton" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M14 3a5 5 0 0 0-4.9 6H3v3h2v2h2v2h3v-2h1.1A5 5 0 1 0 14 3zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+              </svg>
+            </span>
+            <span>Cambiar clave del admin</span>
+          </button>
+        </div>
+
+        <p id="mensajeClaveAdmin" class="mensaje-clave-admin"></p>
+      </div>
+
+      <div class="bloque-claves-lectura">
+        <div class="bloque-claves-lectura-cabecera">
+          <h3>Claves registradas</h3>
+          <button id="btnRecargarClavesAdmin" type="button" class="btn-secundario-panel">Actualizar lista</button>
+        </div>
+        <div class="panel-claves-nota">Solo lectura por ahora. Cuando una clave no puede mostrarse, el sistema indicará que está protegida.</div>
+        <div id="listaClavesAdmin"></div>
+      </div>
+    </div>
+
+    <div id="modalCambioClaveAdmin" class="modal-clave-admin" style="display:none;">
+      <div class="modal-clave-admin-backdrop" id="cerrarModalCambioClaveBackdrop"></div>
+      <div class="modal-clave-admin-contenido">
+        <div class="modal-clave-admin-header">
+          <h3>Cambio de clave</h3>
+          <p>Ingrese la nueva clave del administrador y confirme antes de guardar.</p>
+        </div>
+
+        <div class="campo-login">
+          <label for="nuevaClaveAdmin">Nueva clave</label>
+          <div class="input-login input-clave-admin-modal">
+            <span class="input-login-icono">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-6 7.73V17a1 1 0 0 0 2 0v-1.27a2 2 0 1 0-2 0zM10 8V6a2 2 0 0 1 4 0v2z"/>
+              </svg>
+            </span>
+            <input type="password" id="nuevaClaveAdmin" placeholder="Ingrese nueva clave" autocomplete="new-password">
+          </div>
+        </div>
+
+        <div class="campo-login">
+          <label for="confirmarClaveAdmin">Confirmar nueva clave</label>
+          <div class="input-login input-clave-admin-modal">
+            <span class="input-login-icono">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-6 7.73V17a1 1 0 0 0 2 0v-1.27a2 2 0 1 0-2 0zM10 8V6a2 2 0 0 1 4 0v2z"/>
+              </svg>
+            </span>
+            <input type="password" id="confirmarClaveAdmin" placeholder="Confirme nueva clave" autocomplete="new-password">
+          </div>
+        </div>
+
+        <button id="btnGuardarClaveAdmin" type="button" class="btn-clave-admin-guardar-modal">
+          <span class="icono-boton" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 4h16v12H7l-3 3V4zm3 4h10v2H7V8zm0 4h7v2H7v-2z"/>
+            </svg>
+          </span>
+          <span>Guardar nueva clave</span>
+        </button>
+
+        <button id="btnLimpiarClaveAdmin" type="button" class="btn-clave-admin-cancelar-modal">Cancelar</button>
+      </div>
+    </div>
+
     <!-- PANEL ADMIN ACTIVIDAD -->
+<!-- PANEL ADMIN ACTIVIDAD -->
     <div id="panelActividadAdmin" class="app" style="display:none; margin-top:16px;">
       <div id="envolturaBotonVolverActividad" class="envoltura-boton-volver">
         <button id="btnVolverMenuDesdeActividad" type="button" class="btn-volver-menu">&larr; Volver al panel</button>
