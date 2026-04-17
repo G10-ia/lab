@@ -1125,7 +1125,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (fechaInput && horaInput) {
-    horaInput.setAttribute("lang", "fr-CA");
+    horaInput.setAttribute("lang", "en-US");
     horaInput.setAttribute("inputmode", "numeric");
     horaInput.setAttribute("autocomplete", "off");
     ponerFechaHoraActual();
@@ -3755,3 +3755,4 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarBody();
   }, 1500);
 });
+
