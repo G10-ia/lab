@@ -270,6 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let detalleActividadExpandidoUserId = null;
   let historialActividadCache = {};
   let ordenActividadDetalleCache = {};
+  let resumenIntentosActividadCache = {};
   let clavesAdminCache = [];
 
   // =========================
@@ -1057,29 +1058,43 @@ document.addEventListener("DOMContentLoaded", () => {
       const payloadHistorial = {
         user_id: userId,
         usuario: nombreUsuario || "",
-        fecha_hora_ingreso: fechaHoraIngreso
+        fecha_hora_ingreso: fechaHoraIngreso,
+        tipo: "exitoso",
+        motivo: null
       };
 
       const { data: historialInsertado, error: errorInsertHistorial } = await supabase
         .from("actividad_sistema_historial")
         .insert([payloadHistorial])
-        .select("id, user_id, usuario, fecha_hora_ingreso")
+        .select("id, user_id, usuario, fecha_hora_ingreso, tipo, motivo")
         .maybeSingle();
 
       if (errorInsertHistorial) {
         console.error("Error insertando historial de actividad:", errorInsertHistorial);
-      } else if (Array.isArray(historialActividadCache[userId])) {
-        historialActividadCache[userId] = historialInsertado
-          ? [historialInsertado, ...historialActividadCache[userId]]
-          : [
-              {
-                id: `temp_${Date.now()}`,
-                user_id: userId,
-                usuario: nombreUsuario || "",
-                fecha_hora_ingreso: fechaHoraIngreso
-              },
-              ...historialActividadCache[userId]
-            ];
+      } else {
+        const clavesCache = new Set([String(userId)]);
+        const usuarioNormalizado = normalizarUsuarioSolicitud(nombreUsuario || "");
+        if (usuarioNormalizado) {
+          clavesCache.add(`usuario:${usuarioNormalizado}`);
+        }
+
+        clavesCache.forEach((clave) => {
+          if (Array.isArray(historialActividadCache[clave])) {
+            historialActividadCache[clave] = historialInsertado
+              ? [historialInsertado, ...historialActividadCache[clave]]
+              : [
+                  {
+                    id: `temp_${Date.now()}`,
+                    user_id: userId,
+                    usuario: nombreUsuario || "",
+                    fecha_hora_ingreso: fechaHoraIngreso,
+                    tipo: "exitoso",
+                    motivo: null
+                  },
+                  ...historialActividadCache[clave]
+                ];
+          }
+        });
       }
 
       const indiceActividad = actividadAdminCache.findIndex((item) => item && item.user_id === userId);
@@ -1101,6 +1116,129 @@ document.addEventListener("DOMContentLoaded", () => {
       return false;
     }
   }
+
+  async function registrarIngresoFallido(usuarioIntentado, motivo = "credenciales_incorrectas", userId = null) {
+    try {
+      const fechaHoraIngreso = new Date().toISOString();
+
+      const payloadHistorial = {
+        user_id: userId || null,
+        usuario: usuarioIntentado || "",
+        fecha_hora_ingreso: fechaHoraIngreso,
+        tipo: "fallido",
+        motivo: motivo
+      };
+
+      const { data: historialInsertado, error } = await supabase
+        .from("actividad_sistema_historial")
+        .insert([payloadHistorial])
+        .select("id, user_id, usuario, fecha_hora_ingreso, tipo, motivo")
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error insertando ingreso fallido:", error);
+        return false;
+      }
+
+      const clavesCache = new Set();
+
+      if (userId) {
+        clavesCache.add(String(userId));
+      }
+
+      const usuarioNormalizado = normalizarUsuarioSolicitud(usuarioIntentado || "");
+      if (usuarioNormalizado) {
+        clavesCache.add(`usuario:${usuarioNormalizado}`);
+      }
+
+      clavesCache.forEach((clave) => {
+        if (Array.isArray(historialActividadCache[clave])) {
+          historialActividadCache[clave] = historialInsertado
+            ? [historialInsertado, ...historialActividadCache[clave]]
+            : [
+                {
+                  id: `temp_${Date.now()}`,
+                  user_id: userId || null,
+                  usuario: usuarioIntentado || "",
+                  fecha_hora_ingreso: fechaHoraIngreso,
+                  tipo: "fallido",
+                  motivo: motivo
+                },
+                ...historialActividadCache[clave]
+              ];
+        }
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Error general registrando ingreso fallido:", error);
+      return false;
+    }
+  }
+
+  function obtenerClaveActividad(item = {}) {
+    if (item && item.user_id) return String(item.user_id);
+    const usuarioNormalizado = normalizarUsuarioSolicitud(item && item.usuario ? item.usuario : "");
+    if (usuarioNormalizado) return `usuario:${usuarioNormalizado}`;
+    return `actividad:${Date.now()}`;
+  }
+
+  function obtenerUltimoEventoActividad(item) {
+    if (!item) return null;
+    if (item.ultima_conexion) {
+      return {
+        tipo: "exitoso",
+        fecha_hora_ingreso: item.ultima_conexion,
+        motivo: ""
+      };
+    }
+    if (item.ultimo_intento) {
+      return {
+        tipo: item.ultimo_tipo || "fallido",
+        fecha_hora_ingreso: item.ultimo_intento,
+        motivo: item.ultimo_motivo || ""
+      };
+    }
+    return null;
+  }
+
+  function obtenerEstadoTarjetaActividad(item) {
+    if (!item) {
+      return {
+        texto: "Sin actividad",
+        clase: "tarjeta-actividad-admin-pill-neutro"
+      };
+    }
+
+    const ultimoEvento = obtenerUltimoEventoActividad(item);
+
+    if (!ultimoEvento) {
+      return {
+        texto: "Sin actividad",
+        clase: "tarjeta-actividad-admin-pill-neutro"
+      };
+    }
+
+    if (ultimoEvento.tipo === "fallido") {
+      return {
+        texto: "Intento fallido",
+        clase: "tarjeta-actividad-admin-pill-fallido"
+      };
+    }
+
+    if (Number(item.total_fallidos || 0) > 0) {
+      return {
+        texto: "Con fallidos",
+        clase: "tarjeta-actividad-admin-pill-alerta"
+      };
+    }
+
+    return {
+      texto: "Activo",
+      clase: "tarjeta-actividad-admin-pill-exito"
+    };
+  }
+
 
   // =========================
   // FECHA Y HORA AUTOMATICAS
@@ -1499,6 +1637,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (error || !data || !data.user) {
         console.error("Error al iniciar sesion:", error);
+        await registrarIngresoFallido(usuarioIngresado, "credenciales_incorrectas");
         if (mensajeLogin) mensajeLogin.textContent = "Usuario o contrasena incorrectos";
         return;
       }
@@ -1517,6 +1656,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (perfil.activo !== true) {
+        await registrarIngresoFallido(usuarioIngresado, "usuario_inactivo", data.user.id);
         await supabase.auth.signOut();
         if (mensajeLogin) mensajeLogin.textContent = "Usuario inactivo o bloqueado";
         return;
@@ -1528,6 +1668,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const validacionInstalacion = await validarInstalacionUsuario(data.user.id);
 
         if (!validacionInstalacion.ok) {
+          await registrarIngresoFallido(usuarioIngresado, "dispositivo_no_autorizado", data.user.id);
           await supabase.auth.signOut();
           if (mensajeLogin) mensajeLogin.textContent = validacionInstalacion.mensaje || "No se pudo validar el dispositivo";
           return;
@@ -2927,9 +3068,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function obtenerHtmlDetalleActividad(item) {
-    const userId = item.user_id;
-    const historial = historialActividadCache[userId];
-    const abierto = detalleActividadExpandidoUserId === userId;
+    const claveActividad = obtenerClaveActividad(item);
+    const historial = historialActividadCache[claveActividad];
+    const abierto = detalleActividadExpandidoUserId === claveActividad;
     const textoBoton = abierto ? 'Ocultar actividad' : 'Ver actividad';
 
     let detalleHtml = '';
@@ -2938,12 +3079,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (historial === null) {
         detalleHtml = '<div class="actividad-admin-detalle"><div class="actividad-admin-detalle-vacio">Cargando actividad...</div></div>';
       } else {
-        const historialOrdenado = obtenerHistorialActividadOrdenadoYFiltrado(userId, historial);
-        const etiquetaOrden = obtenerEtiquetaOrdenActividad(userId);
+        const historialOrdenado = obtenerHistorialActividadOrdenadoYFiltrado(claveActividad, historial);
+        const etiquetaOrden = obtenerEtiquetaOrdenActividad(claveActividad);
         const bloqueCabecera = `
           <div class="actividad-admin-detalle-cabecera">
             <div class="actividad-admin-detalle-titulo">Historial de actividad</div>
-            <button type="button" class="btn-actividad-orden" data-user-id="${escapeHtml(userId)}">${etiquetaOrden}</button>
+            <button type="button" class="btn-actividad-orden" data-user-id="${escapeHtml(claveActividad)}">${etiquetaOrden}</button>
           </div>
         `;
 
@@ -2956,17 +3097,23 @@ document.addEventListener("DOMContentLoaded", () => {
               <div class="actividad-admin-detalle-lista">
                 ${historialOrdenado.map((fila) => {
                   const fechaHora = fila.fecha_hora_ingreso ? formatearCreatedAt(fila.fecha_hora_ingreso) : '-';
+                  const esFallido = String(fila.tipo || '').toLowerCase() === 'fallido';
+                  const tituloEvento = esFallido ? 'Ingreso fallido' : 'Ingreso exitoso';
+                  const claseEvento = esFallido ? 'actividad-evento-fallido' : 'actividad-evento-ingreso';
+                  const motivo = esFallido && fila.motivo ? `<div class="actividad-evento-motivo">${escapeHtml(String(fila.motivo).replace(/_/g, ' '))}</div>` : '';
+
                   return `
-                    <div class="actividad-evento actividad-evento-ingreso">
+                    <div class="actividad-evento ${claseEvento}">
                       <div class="actividad-evento-linea"></div>
                       <div class="actividad-evento-icono">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
-                        </svg>
+                        ${esFallido
+                          ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>`
+                          : `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>`}
                       </div>
                       <div class="actividad-evento-contenido">
-                        <div class="actividad-evento-titulo">Ingreso exitoso</div>
+                        <div class="actividad-evento-titulo">${tituloEvento}</div>
                         <div class="actividad-evento-fecha">${fechaHora}</div>
+                        ${motivo}
                       </div>
                     </div>
                   `;
@@ -2979,60 +3126,97 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     return `
-      <button type="button" class="btn-actividad-detalle" data-user-id="${escapeHtml(item.user_id)}">${textoBoton}</button>
+      <button type="button" class="btn-actividad-detalle" data-user-id="${escapeHtml(claveActividad)}">${textoBoton}</button>
       ${detalleHtml}
     `;
   }
 
-  async function cargarHistorialActividadPorUsuario(userId) {
-    historialActividadCache[userId] = null;
+  async function cargarHistorialActividadPorUsuario(claveActividad) {
+    historialActividadCache[claveActividad] = null;
     renderizarActividadAdmin();
 
-    try {
-      const { data, error } = await supabase
-        .from("actividad_sistema_historial")
-        .select("id, user_id, fecha_hora_ingreso")
-        .eq("user_id", userId)
-        .order("fecha_hora_ingreso", { ascending: false });
+    const itemActividad = actividadAdminCache.find((item) => obtenerClaveActividad(item) === claveActividad) || null;
+    const userId = itemActividad && itemActividad.user_id ? itemActividad.user_id : null;
+    const usuario = itemActividad && itemActividad.usuario ? itemActividad.usuario : "";
 
-      if (error) {
-        console.error("Error cargando detalle de actividad:", error);
-        historialActividadCache[userId] = [];
-        renderizarActividadAdmin();
-        return;
+    try {
+      const consultas = [];
+
+      if (userId) {
+        consultas.push(
+          supabase
+            .from("actividad_sistema_historial")
+            .select("id, user_id, usuario, fecha_hora_ingreso, tipo, motivo")
+            .eq("user_id", userId)
+            .order("fecha_hora_ingreso", { ascending: false })
+        );
       }
 
-      historialActividadCache[userId] = Array.isArray(data) ? data : [];
+      if (usuario) {
+        consultas.push(
+          supabase
+            .from("actividad_sistema_historial")
+            .select("id, user_id, usuario, fecha_hora_ingreso, tipo, motivo")
+            .eq("usuario", usuario)
+            .order("fecha_hora_ingreso", { ascending: false })
+        );
+      }
+
+      const respuestas = consultas.length ? await Promise.all(consultas) : [];
+
+      const registrosMap = new Map();
+
+      for (const respuesta of respuestas) {
+        if (respuesta.error) {
+          console.error("Error cargando detalle de actividad:", respuesta.error);
+          historialActividadCache[claveActividad] = [];
+          renderizarActividadAdmin();
+          return;
+        }
+
+        (respuesta.data || []).forEach((fila) => {
+          if (!fila) return;
+          const llave = fila.id ? String(fila.id) : `${fila.user_id || "sin_user"}|${fila.usuario || ""}|${fila.fecha_hora_ingreso || ""}|${fila.tipo || ""}|${fila.motivo || ""}`;
+          if (!registrosMap.has(llave)) {
+            registrosMap.set(llave, fila);
+          }
+        });
+      }
+
+      historialActividadCache[claveActividad] = Array.from(registrosMap.values());
       renderizarActividadAdmin();
     } catch (error) {
       console.error("Error general cargando detalle de actividad:", error);
-      historialActividadCache[userId] = [];
+      historialActividadCache[claveActividad] = [];
       renderizarActividadAdmin();
     }
   }
 
-  async function toggleDetalleActividadAdmin(userId) {
-    if (!userId) return;
+  async function toggleDetalleActividadAdmin(claveActividad) {
+    if (!claveActividad) return;
 
-    if (detalleActividadExpandidoUserId === userId) {
+    if (detalleActividadExpandidoUserId === claveActividad) {
       detalleActividadExpandidoUserId = null;
       renderizarActividadAdmin();
       return;
     }
 
-    detalleActividadExpandidoUserId = userId;
+    detalleActividadExpandidoUserId = claveActividad;
 
-    if (!ordenActividadDetalleCache[userId]) {
-      ordenActividadDetalleCache[userId] = "desc";
+    if (!ordenActividadDetalleCache[claveActividad]) {
+      ordenActividadDetalleCache[claveActividad] = "desc";
     }
 
-    await cargarHistorialActividadPorUsuario(userId);
+    await cargarHistorialActividadPorUsuario(claveActividad);
   }
 
   function renderizarActividadAdmin() {
     if (!listaActividadAdmin) return;
 
-    const actividadFiltrada = actividadAdminCache.filter((item) => cumpleFiltroFechaActividad(item.ultima_conexion || item.fecha_ingreso));
+    const actividadFiltrada = actividadAdminCache.filter((item) => {
+      const ultimoEvento = obtenerUltimoEventoActividad(item);
+      return cumpleFiltroFechaActividad((ultimoEvento && ultimoEvento.fecha_hora_ingreso) || item.ultima_conexion || item.fecha_ingreso || item.ultimo_intento);
+    });
 
     if (!actividadFiltrada.length) {
       listaActividadAdmin.innerHTML = '<div class="actividad-admin-vacio">No hay actividad registrada para ese filtro</div>';
@@ -3042,25 +3226,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     listaActividadAdmin.innerHTML = actividadFiltrada.map((item) => {
       const usuario = escapeHtml(item.usuario || '-');
-      const ultimaConexion = item.ultima_conexion ? formatearCreatedAt(item.ultima_conexion) : '-';
+      const ultimoEvento = obtenerUltimoEventoActividad(item);
+      const estadoTarjeta = obtenerEstadoTarjetaActividad(item);
+      const fechaUltimoEvento = ultimoEvento && ultimoEvento.fecha_hora_ingreso
+        ? formatearCreatedAt(ultimoEvento.fecha_hora_ingreso)
+        : '-';
+      const tipoUltimoEvento = ultimoEvento && ultimoEvento.tipo === 'fallido' ? 'Último intento:' : 'Último ingreso:';
       const totalIngresos = Number(item.contador_ingresos || 0);
+      const totalFallidos = Number(item.total_fallidos || 0);
       const etiquetaIngresos = totalIngresos === 1 ? '1 ingreso' : `${totalIngresos} ingresos`;
+      const etiquetaFallidos = totalFallidos === 1 ? '1 fallido' : `${totalFallidos} fallidos`;
 
       return `
         <div class="tarjeta-actividad-admin">
           <div class="tarjeta-actividad-admin-header">
             <div class="tarjeta-actividad-admin-usuario">${usuario}</div>
-            <div class="tarjeta-actividad-admin-pill tarjeta-actividad-admin-pill-exito">Activo</div>
+            <div class="tarjeta-actividad-admin-pill ${estadoTarjeta.clase}">${escapeHtml(estadoTarjeta.texto)}</div>
           </div>
 
           <div class="tarjeta-actividad-admin-resumen">
             <div class="tarjeta-actividad-admin-dato">
-              <div class="tarjeta-actividad-admin-etiqueta">Último ingreso:</div>
-              <div class="tarjeta-actividad-admin-valor">${ultimaConexion}</div>
+              <div class="tarjeta-actividad-admin-etiqueta">${tipoUltimoEvento}</div>
+              <div class="tarjeta-actividad-admin-valor">${fechaUltimoEvento}</div>
             </div>
             <div class="tarjeta-actividad-admin-dato">
-              <div class="tarjeta-actividad-admin-etiqueta">Total ingresos:</div>
-              <div class="tarjeta-actividad-admin-valor">${etiquetaIngresos}</div>
+              <div class="tarjeta-actividad-admin-etiqueta">Resumen:</div>
+              <div class="tarjeta-actividad-admin-valor">${etiquetaIngresos} · ${etiquetaFallidos}</div>
             </div>
           </div>
 
@@ -3080,45 +3271,110 @@ document.addEventListener("DOMContentLoaded", () => {
     actualizarResumenActividad(0);
 
     try {
-      const { data: perfiles, error: errorPerfiles } = await supabase
-        .from("profiles")
-        .select("id, usuario, rol")
-        .not("rol", "eq", "admin");
+      const [{ data: perfiles, error: errorPerfiles }, { data: actividad, error: errorActividad }, { data: historial, error: errorHistorial }] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id, usuario, rol")
+          .not("rol", "eq", "admin"),
+        supabase
+          .from("actividad_sistema")
+          .select("user_id, usuario, fecha_ingreso, hora_ingreso, ultima_conexion, contador_ingresos")
+          .order("ultima_conexion", { ascending: false }),
+        supabase
+          .from("actividad_sistema_historial")
+          .select("id, user_id, usuario, fecha_hora_ingreso, tipo, motivo")
+          .order("fecha_hora_ingreso", { ascending: false })
+      ]);
 
-      if (errorPerfiles) {
-        console.error("Error cargando perfiles para actividad:", errorPerfiles);
+      if (errorPerfiles || errorActividad || errorHistorial) {
+        console.error("Error cargando actividad del sistema:", errorPerfiles || errorActividad || errorHistorial);
         listaActividadAdmin.innerHTML = '<div class="actividad-admin-error">No se pudo cargar la actividad del sistema</div>';
         return;
       }
 
-      const mapaUsuarios = {};
+      const mapaUsuariosPorId = {};
+      const mapaPerfilesPorUsuario = {};
       (perfiles || []).forEach((perfil) => {
         if (!perfil || !perfil.id) return;
-        mapaUsuarios[perfil.id] = perfil.usuario || '';
+        mapaUsuariosPorId[perfil.id] = perfil.usuario || '';
+        const llaveUsuario = normalizarUsuarioSolicitud(perfil.usuario || '');
+        if (llaveUsuario) {
+          mapaPerfilesPorUsuario[llaveUsuario] = perfil;
+        }
       });
 
-      const { data: actividad, error: errorActividad } = await supabase
-        .from("actividad_sistema")
-        .select("user_id, usuario, fecha_ingreso, hora_ingreso, ultima_conexion, contador_ingresos")
-        .order("ultima_conexion", { ascending: false });
+      const mapaActividad = new Map();
 
-      if (errorActividad) {
-        console.error("Error cargando actividad del sistema:", errorActividad);
-        listaActividadAdmin.innerHTML = '<div class="actividad-admin-error">No se pudo cargar la actividad del sistema</div>';
-        return;
-      }
+      (actividad || []).forEach((item) => {
+        if (!item || !item.user_id || !mapaUsuariosPorId[item.user_id]) return;
 
-      actividadAdminCache = (actividad || [])
-        .filter((item) => item && item.user_id && mapaUsuarios[item.user_id])
-        .map((item) => ({
-          ...item,
-          usuario: mapaUsuarios[item.user_id] || item.usuario || '-',
-          contador_ingresos: Number(item.contador_ingresos || 0)
-        }));
+        mapaActividad.set(String(item.user_id), {
+          user_id: item.user_id,
+          usuario: mapaUsuariosPorId[item.user_id] || item.usuario || '-',
+          fecha_ingreso: item.fecha_ingreso || '',
+          hora_ingreso: item.hora_ingreso || '',
+          ultima_conexion: item.ultima_conexion || '',
+          contador_ingresos: Number(item.contador_ingresos || 0),
+          total_fallidos: 0,
+          ultimo_intento: item.ultima_conexion || '',
+          ultimo_tipo: item.ultima_conexion ? 'exitoso' : '',
+          ultimo_motivo: ''
+        });
+      });
+
+      (historial || []).forEach((fila) => {
+        if (!fila) return;
+
+        const userId = fila.user_id ? String(fila.user_id) : '';
+        const usuarioFila = String(fila.usuario || '').trim();
+        const usuarioNormalizado = normalizarUsuarioSolicitud(usuarioFila);
+        const perfilRelacionado = userId ? null : mapaPerfilesPorUsuario[usuarioNormalizado];
+        const clave = userId || (perfilRelacionado && perfilRelacionado.id ? String(perfilRelacionado.id) : `usuario:${usuarioNormalizado || usuarioFila || 'desconocido'}`);
+
+        if (!mapaActividad.has(clave)) {
+          mapaActividad.set(clave, {
+            user_id: perfilRelacionado && perfilRelacionado.id ? perfilRelacionado.id : (userId || null),
+            usuario: (perfilRelacionado && perfilRelacionado.usuario) || usuarioFila || '-',
+            fecha_ingreso: '',
+            hora_ingreso: '',
+            ultima_conexion: '',
+            contador_ingresos: 0,
+            total_fallidos: 0,
+            ultimo_intento: '',
+            ultimo_tipo: '',
+            ultimo_motivo: ''
+          });
+        }
+
+        const itemActual = mapaActividad.get(clave);
+        const tipoEvento = String(fila.tipo || 'exitoso').toLowerCase();
+
+        if (tipoEvento === 'fallido') {
+          itemActual.total_fallidos = Number(itemActual.total_fallidos || 0) + 1;
+        }
+
+        const marcaTiempoFila = fila.fecha_hora_ingreso ? new Date(fila.fecha_hora_ingreso).getTime() : 0;
+        const marcaTiempoActual = itemActual.ultimo_intento ? new Date(itemActual.ultimo_intento).getTime() : 0;
+
+        if (!itemActual.ultimo_intento || marcaTiempoFila > marcaTiempoActual) {
+          itemActual.ultimo_intento = fila.fecha_hora_ingreso || '';
+          itemActual.ultimo_tipo = tipoEvento || 'exitoso';
+          itemActual.ultimo_motivo = fila.motivo || '';
+        }
+
+        mapaActividad.set(clave, itemActual);
+      });
+
+      actividadAdminCache = Array.from(mapaActividad.values()).sort((a, b) => {
+        const fechaA = obtenerUltimoEventoActividad(a)?.fecha_hora_ingreso ? new Date(obtenerUltimoEventoActividad(a).fecha_hora_ingreso).getTime() : 0;
+        const fechaB = obtenerUltimoEventoActividad(b)?.fecha_hora_ingreso ? new Date(obtenerUltimoEventoActividad(b).fecha_hora_ingreso).getTime() : 0;
+        return fechaB - fechaA;
+      });
 
       detalleActividadExpandidoUserId = null;
       historialActividadCache = {};
       ordenActividadDetalleCache = {};
+      resumenIntentosActividadCache = {};
       renderizarActividadAdmin();
     } catch (error) {
       console.error("Error general cargando actividad del sistema:", error);
