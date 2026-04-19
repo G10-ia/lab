@@ -3834,3 +3834,42 @@ input[type="time"]::-webkit-inner-spin-button {
   }
 }
 
+
+
+/* ===== ESTADOS FALLIDOS / ROJOS EN ACTIVIDAD ===== */
+#panelActividadAdmin .tarjeta-actividad-admin-pill-fallido {
+  background: #fdecec;
+  color: #c62828;
+}
+
+#panelActividadAdmin .tarjeta-actividad-admin-pill-alerta {
+  background: #fff4e5;
+  color: #b26a00;
+}
+
+#panelActividadAdmin .tarjeta-actividad-admin-pill-neutro {
+  background: #eef2f7;
+  color: #5b6573;
+}
+
+#panelActividadAdmin .actividad-evento-fallido .actividad-evento-linea {
+  background: #ef9a9a;
+}
+
+#panelActividadAdmin .actividad-evento-fallido .actividad-evento-icono {
+  background: #d32f2f;
+  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.25);
+}
+
+#panelActividadAdmin .actividad-evento-fallido .actividad-evento-titulo {
+  color: #c62828;
+}
+
+#panelActividadAdmin .actividad-evento-motivo {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #7a1c1c;
+  text-transform: capitalize;
+}
+
