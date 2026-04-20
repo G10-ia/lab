@@ -363,6 +363,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnGuardarCambioClaveAdmin) btnGuardarCambioClaveAdmin.disabled = false;
   }
 
+  function obtenerIconoOjoClaveSvg(visible = false) {
+    return visible
+      ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4.27 3.28 3l17.72 17.73L19.73 22l-3.07-3.07A10.7 10.7 0 0 1 12 20C6.5 20 2.5 14.5 2.5 13c0-1.11 2.19-4.34 5.62-6.08L2 4.27zm9.5 11.23a3.48 3.48 0 0 0 3.41-2.77l-4.14-4.14A3.5 3.5 0 0 0 11.5 15.5zM12 6c5.5 0 9.5 5.5 9.5 7 0 .72-.94 2.26-2.55 3.77l-2.2-2.2c.16-.5.25-1.03.25-1.57a5 5 0 0 0-5-5c-.54 0-1.07.09-1.57.25L8.6 6.43A9.92 9.92 0 0 1 12 6z"/></svg>`
+      : `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-5.5 0-9.5 5.5-9.5 7s4 7 9.5 7 9.5-5.5 9.5-7-4-7-9.5-7zm0 11a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm0-6.5A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5z"/></svg>`;
+  }
+
   function construirHtmlClavesAdmin(lista) {
     if (!Array.isArray(lista) || !lista.length) {
       return "<p style='padding:10px;'>No hay claves registradas para mostrar</p>";
@@ -373,8 +379,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const claseTarjeta = esAdmin ? "tarjeta-clave-admin" : "tarjeta-clave-regular";
       const claseBadge = esAdmin ? "tarjeta-clave-badge-admin" : "tarjeta-clave-badge-usuario";
       const rolTexto = esAdmin ? "admin" : "usuario";
-      const valorClave = item.clave_visible ? escaparHtml(item.clave_visible) : "Clave protegida";
-      const ayuda = item.clave_visible
+      const tieneClaveVisible = !!item.clave_visible;
+      const valorClaveReal = tieneClaveVisible ? escaparHtml(item.clave_visible) : "";
+      const valorClaveOculta = tieneClaveVisible ? "••••••••" : "Clave protegida";
+      const ayuda = tieneClaveVisible
         ? "Clave mostrada desde la última solicitud registrada para este usuario."
         : "Clave protegida por seguridad. Solo se muestra cuando existe una solicitud registrada.";
 
@@ -385,7 +393,24 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="tarjeta-clave-badge ${claseBadge}">${escaparHtml(rolTexto)}</div>
           </div>
           <div class="tarjeta-clave-label">Clave registrada</div>
-          <div class="tarjeta-clave-valor">${valorClave}</div>
+          <div class="tarjeta-clave-campo ${tieneClaveVisible ? "tarjeta-clave-campo-con-boton" : ""}">
+            <div
+              class="tarjeta-clave-valor ${tieneClaveVisible ? "tarjeta-clave-valor-oculta" : ""}"
+              data-clave-real="${valorClaveReal}"
+              data-visible="false"
+            >${valorClaveOculta}</div>
+            ${tieneClaveVisible ? `
+              <button
+                type="button"
+                class="btn-toggle-clave-admin"
+                aria-label="Mostrar clave"
+                aria-pressed="false"
+                title="Mostrar clave"
+              >
+                ${obtenerIconoOjoClaveSvg(false)}
+              </button>
+            ` : ""}
+          </div>
           <div class="tarjeta-clave-ayuda">${escaparHtml(ayuda)}</div>
         </div>
       `;
@@ -1886,6 +1911,39 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnGuardarCambioClaveAdmin) {
     btnGuardarCambioClaveAdmin.addEventListener("click", async () => {
       await guardarCambioClaveAdmin();
+    });
+  }
+
+  if (listaClavesAdmin) {
+    listaClavesAdmin.addEventListener("click", (event) => {
+      const botonToggleClave = event.target.closest(".btn-toggle-clave-admin");
+      if (!botonToggleClave) return;
+
+      const contenedorClave = botonToggleClave.closest(".tarjeta-clave-campo");
+      const valorClave = contenedorClave ? contenedorClave.querySelector(".tarjeta-clave-valor") : null;
+      if (!valorClave) return;
+
+      const estaVisible = valorClave.dataset.visible === "true";
+      const claveReal = valorClave.dataset.claveReal || "";
+      if (!claveReal) return;
+
+      if (estaVisible) {
+        valorClave.textContent = "••••••••";
+        valorClave.dataset.visible = "false";
+        valorClave.classList.add("tarjeta-clave-valor-oculta");
+        botonToggleClave.innerHTML = obtenerIconoOjoClaveSvg(false);
+        botonToggleClave.setAttribute("aria-label", "Mostrar clave");
+        botonToggleClave.setAttribute("aria-pressed", "false");
+        botonToggleClave.setAttribute("title", "Mostrar clave");
+      } else {
+        valorClave.textContent = claveReal;
+        valorClave.dataset.visible = "true";
+        valorClave.classList.remove("tarjeta-clave-valor-oculta");
+        botonToggleClave.innerHTML = obtenerIconoOjoClaveSvg(true);
+        botonToggleClave.setAttribute("aria-label", "Ocultar clave");
+        botonToggleClave.setAttribute("aria-pressed", "true");
+        botonToggleClave.setAttribute("title", "Ocultar clave");
+      }
     });
   }
 
@@ -4011,3 +4069,5 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarBody();
   }, 1500);
 });
+
+
