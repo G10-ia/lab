@@ -2632,6 +2632,49 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function construirHtmlTarjetasUsuarios(usuarios) {
+    const iconoDesactivarUsuario = `
+      <span class="icono-boton" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M13 3h-2v10h2V3zm4.83 2.17-1.42 1.42A7 7 0 1 1 7.59 6.59L6.17 5.17A9 9 0 1 0 17.83 5.17z"/>
+        </svg>
+      </span>
+    `;
+
+    const iconoActivarUsuario = `
+      <span class="icono-boton" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M13 3h-2v10h2V3zm4.83 2.17-1.42 1.42A7 7 0 1 1 7.59 6.59L6.17 5.17A9 9 0 1 0 17.83 5.17z"/>
+        </svg>
+      </span>
+    `;
+
+    const iconoDesvincularUsuario = `
+      <span class="icono-boton" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M3.27 2 2 3.27l5.2 5.2-1.43 1.42a4 4 0 0 0 0 5.66l.7.71L4.34 16.4a2 2 0 1 0 2.83 2.83l2.12-2.12.71.71a4 4 0 0 0 5.66 0l1.42-1.42L20.73 22 22 20.73 3.27 2zm10.98 14.4a2 2 0 0 1-2.83 0l-4.24-4.24a2 2 0 0 1 0-2.83l1.43-1.42 7.07 7.07-1.43 1.42zM8.34 5.76l1.42 1.42.95-.95a2 2 0 0 1 2.83 0l.7.71 1.42-1.42-.7-.71a4 4 0 0 0-5.66 0l-.96.95zm6.6 6.6 1.42 1.42 1.87-1.87a4 4 0 0 0 0-5.66l-.7-.71-1.42 1.42.7.71a2 2 0 0 1 0 2.83l-1.87 1.86z"/>
+        </svg>
+      </span>
+    `;
+
+    function construirFechaHoraVinculacion(textoFechaVinculacion) {
+      const valor = String(textoFechaVinculacion || "-").trim();
+
+      if (!valor || valor === "-") {
+        return `<span class="usuario-admin-fecha-hora"><span>-</span></span>`;
+      }
+
+      const partes = valor.split(/\s+/);
+      const fecha = partes[0] || "-";
+      const hora = partes.slice(1).join(" ") || "";
+
+      return `
+        <span class="usuario-admin-fecha-hora">
+          <span>${escaparHtml(fecha)}</span>
+          ${hora ? `<span>${escaparHtml(hora)}</span>` : ""}
+        </span>
+      `;
+    }
+
     return usuarios.map((usuario) => {
       const activo = usuario.activo === true;
       const esAdminFila = String(usuario.rol || "").toLowerCase() === "admin";
@@ -2640,13 +2683,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const fondoEstado = activo ? "#e8f5e9" : "#fff5f6";
       const textoBoton = activo ? "Desactivar" : "Activar";
       const colorBoton = activo ? "#c62828" : "#2e7d32";
+      const iconoBotonEstado = activo ? iconoDesactivarUsuario : iconoActivarUsuario;
 
       const tieneInstalacion = usuario.tieneInstalacionActiva === true;
       const textoDispositivo = tieneInstalacion ? "Vinculado" : "Sin vincular";
       const colorDispositivo = tieneInstalacion ? "#0d47a1" : "#8a1c1c";
       const fondoDispositivo = tieneInstalacion ? "#e3f2fd" : "#fff4f4";
-      const textoInstallationId = usuario.installation_id ? usuario.installation_id : "-";
-      const textoDeviceInfo = usuario.device_info ? usuario.device_info : "-";
       const textoFechaVinculacion = usuario.fecha_vinculacion_texto ? usuario.fecha_vinculacion_texto : "-";
 
       const anchoBoton = esAdminFila ? "100%" : "calc(50% - 4px)";
@@ -2656,13 +2698,14 @@ document.addEventListener("DOMContentLoaded", () => {
         : `
             <button
               type="button"
-              class="btn-toggle-usuario-admin"
+              class="btn-toggle-usuario-admin btn-accion-usuario-admin"
               data-id="${escaparHtml(usuario.id)}"
               data-activo="${activo ? "true" : "false"}"
               data-usuario="${escaparHtml(usuario.usuario || "")}"
-              style="width:${anchoBoton}; background:${colorBoton}; color:#fff; border:none; border-radius:8px; padding:10px 14px; cursor:pointer;"
+              style="width:${anchoBoton}; background:${colorBoton}; color:#fff;"
             >
-              ${textoBoton}
+              ${iconoBotonEstado}
+              <span>${textoBoton}</span>
             </button>
           `;
 
@@ -2670,19 +2713,20 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `
             <button
               type="button"
-              class="btn-desvincular-dispositivo-admin"
+              class="btn-desvincular-dispositivo-admin btn-accion-usuario-admin"
               data-id="${escaparHtml(usuario.id)}"
               data-usuario="${escaparHtml(usuario.usuario || "")}"
-              style="width:${esAdminFila ? "100%" : "calc(50% - 4px)"}; background:#1565c0; color:#fff; border:none; border-radius:8px; padding:10px 14px; cursor:pointer;"
+              style="width:${esAdminFila ? "100%" : "calc(50% - 4px)"}; background:#1565c0; color:#fff;"
             >
-              Desvincular dispositivo
+              ${iconoDesvincularUsuario}
+              <span>Desvincular</span>
             </button>
           `
         : "";
 
       const bloqueAcciones = (botonToggle || botonDesvincular)
         ? `
-          <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:nowrap; justify-content:flex-start;">
+          <div class="usuario-admin-acciones">
             ${botonToggle}
             ${botonDesvincular}
           </div>
@@ -2690,8 +2734,8 @@ document.addEventListener("DOMContentLoaded", () => {
         : "";
 
       return `
-        <div style="border:1px solid #d9d9d9; border-radius:12px; padding:12px; margin-bottom:12px; background:#fff;">
-          <div style="font-size:14px; line-height:1.45;">
+        <div class="tarjeta-usuario-admin">
+          <div class="tarjeta-usuario-admin-texto">
             <div><strong>Usuario:</strong> ${escaparHtml(usuario.usuario || "-")}</div>
             <div><strong>Rol:</strong> ${escaparHtml(usuario.rol || "-")}</div>
             <div>
@@ -2706,10 +2750,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${textoDispositivo}
               </span>
             </div>
-            <div><strong>ID:</strong> ${escaparHtml(usuario.id || "-")}</div>
-            <div><strong>Installation ID:</strong> ${escaparHtml(textoInstallationId)}</div>
-            <div><strong>Info dispositivo:</strong> ${escaparHtml(textoDeviceInfo)}</div>
-            <div><strong>Fecha de vinculacion:</strong> ${escaparHtml(textoFechaVinculacion)}</div>
+            <div class="fila-fecha-vinculacion">
+              <strong>Fecha de vinculacion:</strong>
+              ${construirFechaHoraVinculacion(textoFechaVinculacion)}
+            </div>
             <div><strong>Total registros:</strong> ${escaparHtml(usuario.totalRegistros || 0)}</div>
           </div>
 
@@ -4069,5 +4113,6 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarBody();
   }, 1500);
 });
+
 
 
