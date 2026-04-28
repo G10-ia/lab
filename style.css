@@ -5237,3 +5237,53 @@ body:has(#pantallaLogin.login-screen-fino) {
 }
 
 
+/* =====================================================
+   SOLUCION DEFINITIVA:
+   LOGIN NO DEBE QUEDAR VISIBLE DESPUES DE INGRESAR
+   Este ajuste corrige que el login aparezca arriba
+   y el panel de administracion debajo.
+===================================================== */
+
+/* Cuando el JS o el HTML ponen display:none, se respeta siempre */
+#pantallaLogin[style*="display: none"],
+#pantallaLogin.login-screen-fino[style*="display: none"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Si el login esta oculto, el body vuelve a ser el body normal de la app */
+body:has(#pantallaLogin[style*="display: none"]),
+body:has(#pantallaLogin.login-screen-fino[style*="display: none"]) {
+  padding: 16px !important;
+  padding-top: 16px !important;
+  background: #e9e5db !important;
+  display: block !important;
+}
+
+/* Mantiene correcto el modo de secciones internas */
+body.con-boton-volver:has(#pantallaLogin[style*="display: none"]),
+body.con-boton-volver:has(#pantallaLogin.login-screen-fino[style*="display: none"]) {
+  padding-top: 16px !important;
+}
+
+/* La app real queda en su posicion normal, no debajo del login */
+#appReal {
+  width: 100% !important;
+  margin: 0 !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Evita que alguna regla del login arrastre margenes hacia el panel */
+#appReal .barra-usuario,
+#appReal .app {
+  position: relative !important;
+}
+
+
