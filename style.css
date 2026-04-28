@@ -3992,3 +3992,1248 @@ input[type="time"]::-webkit-inner-spin-button {
   flex: 0 0 auto;
 }
 
+
+/* =====================================================
+   LOGIN AJUSTE FINO - MODELO AZUL MOVIL
+   Mantiene IDs originales para no romper el JS
+===================================================== */
+body:has(#pantallaLogin[style*="display: block"]),
+body:has(#pantallaLogin:not([style*="display: none"])) {
+  background: #f8fbff;
+}
+
+.login-screen-fino {
+  position: relative;
+  min-height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0 14px 24px;
+  background:
+    radial-gradient(circle at 96% 12%, rgba(219, 232, 250, 0.92) 0 18%, rgba(219, 232, 250, 0.52) 18.2% 31%, transparent 31.5%),
+    radial-gradient(circle at -6% 72%, rgba(222, 235, 252, 0.82) 0 20%, transparent 20.5%),
+    linear-gradient(180deg, #f9fbff 0%, #edf5ff 100%);
+}
+
+.login-screen-fino::before {
+  content: "";
+  position: absolute;
+  left: 34px;
+  top: 54px;
+  width: 132px;
+  height: 70px;
+  background-image: radial-gradient(circle, rgba(47, 128, 237, 0.46) 2px, transparent 2.4px);
+  background-size: 22px 22px;
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.login-screen-fino::after {
+  content: "";
+  position: absolute;
+  right: -85px;
+  top: 16px;
+  width: 310px;
+  height: 310px;
+  border: 2px solid rgba(79, 130, 202, 0.12);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.login-bg-shape {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.login-bg-shape-1 {
+  right: -155px;
+  top: 90px;
+  width: 340px;
+  height: 340px;
+  background: rgba(216, 230, 249, 0.44);
+}
+
+.login-bg-shape-2 {
+  left: -165px;
+  bottom: -90px;
+  width: 320px;
+  height: 320px;
+  background: rgba(226, 238, 253, 0.58);
+}
+
+.login-box-fino {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 430px;
+  margin: 42px auto 0;
+  padding: 34px 26px 28px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(205, 216, 230, 0.72);
+  border-radius: 26px;
+  box-shadow: 0 18px 44px rgba(33, 55, 88, 0.12);
+}
+
+.login-header-fino {
+  margin: 0 0 24px;
+  text-align: center;
+}
+
+.login-logo-fino {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #f8fbff 0%, #eaf3ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 12px 24px rgba(32, 109, 221, 0.13),
+    inset 0 0 0 1px rgba(211, 225, 244, 0.9);
+}
+
+.login-logo-orbita {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2f80ed;
+  box-shadow: 0 2px 5px rgba(47, 128, 237, 0.22);
+}
+
+.login-logo-orbita-a { right: 11px; top: 9px; }
+.login-logo-orbita-b { right: 0; top: 31px; }
+.login-logo-orbita-c { left: 9px; bottom: 12px; }
+
+.login-logo-shield {
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-logo-shield svg {
+  width: 48px;
+  height: 48px;
+  fill: #0a65dc;
+  filter: drop-shadow(0 5px 8px rgba(0, 80, 190, 0.24));
+}
+
+.login-header-fino h2,
+.login-box-fino h2 {
+  margin: 0;
+  color: #082657;
+  font-size: 30px;
+  line-height: 1.12;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  text-shadow: none;
+}
+
+.login-box-fino .login-subtitulo {
+  margin: 12px 0 0;
+  color: #5f6b7a;
+  font-size: 18px;
+  line-height: 1.25;
+  font-weight: 400;
+}
+
+.login-linea-azul {
+  width: 46px;
+  height: 4px;
+  border-radius: 999px;
+  margin: 18px auto 0;
+  background: linear-gradient(90deg, #1488ff 0%, #0f64e7 100%);
+  box-shadow: 0 3px 7px rgba(29, 111, 236, 0.22);
+}
+
+.campo-login-fino {
+  margin-bottom: 24px;
+}
+
+.campo-login-fino label {
+  display: block;
+  margin: 0 0 12px;
+  color: #071426;
+  font-size: 18px;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.input-login-fino {
+  height: 64px;
+  min-height: 64px;
+  width: 100%;
+  border: 1.7px solid #d9e1ec;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: inset 0 0 0 1px rgba(237, 242, 250, 0.45);
+  overflow: hidden;
+}
+
+.input-login-icono-fino {
+  width: 56px;
+  min-width: 56px;
+  height: 48px;
+  margin-left: 10px;
+  border-radius: 13px;
+  background: linear-gradient(180deg, #f2f7ff 0%, #eaf3ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-login-icono-fino svg {
+  width: 25px;
+  height: 25px;
+  fill: #1976e8;
+}
+
+.input-login-fino input {
+  height: 100%;
+  min-width: 0;
+  padding: 0 15px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #182235;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.input-login-fino input::placeholder {
+  color: #7b8493;
+  opacity: 1;
+}
+
+.toggle-password-fino {
+  right: 14px;
+  width: 42px;
+  height: 42px;
+}
+
+.toggle-password-fino .icono-ojo {
+  width: 26px;
+  height: 26px;
+  fill: #687180;
+}
+
+.btn-login-fino,
+#btnIngresar.btn-login-fino {
+  width: 100%;
+  height: 70px;
+  min-height: 70px;
+  margin: 2px 0 22px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(100deg, #0c8cff 0%, #075ddd 100%);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  box-shadow: 0 16px 28px rgba(12, 91, 221, 0.20);
+}
+
+.btn-login-fino .icono-boton svg {
+  width: 30px !important;
+  height: 30px !important;
+  fill: currentColor;
+}
+
+.login-seguridad {
+  min-height: 72px;
+  margin: 0 4px 26px;
+  padding: 13px 18px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #f3f8ff 0%, #eaf3ff 100%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid rgba(212, 226, 247, 0.72);
+}
+
+.login-seguridad-icono {
+  width: 52px;
+  min-width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-seguridad-icono svg {
+  width: 43px;
+  height: 43px;
+  fill: #1b83f4;
+  filter: drop-shadow(0 4px 7px rgba(27, 131, 244, 0.18));
+}
+
+.login-seguridad-texto {
+  min-width: 0;
+  color: #092856;
+}
+
+.login-seguridad-texto strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 17px;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.login-seguridad-texto span {
+  display: block;
+  color: #5d6977;
+  font-size: 16px;
+  line-height: 1.15;
+}
+
+.login-separador {
+  width: 100%;
+  margin: 0 0 24px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 22px;
+  color: #6a7380;
+}
+
+.login-separador span {
+  height: 1.5px;
+  background: #d9e0eb;
+  border-radius: 999px;
+}
+
+.login-separador em {
+  font-style: normal;
+  font-size: 17px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.login-secundario-fino {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin: 0;
+  color: #0d1320;
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+.login-secundario-fino .link-acceso {
+  color: #0877eb;
+  font-size: 17px;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.login-secundario-fino .link-acceso svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+.login-box-fino .mensaje-login {
+  margin-top: 14px;
+}
+
+@media (max-width: 520px) {
+  .login-screen-fino {
+    padding: 0 16px 20px;
+  }
+
+  .login-screen-fino::before {
+    left: 31px;
+    top: 62px;
+    width: 116px;
+    height: 62px;
+    background-size: 18px 18px;
+  }
+
+  .login-box-fino {
+    max-width: none;
+    width: 100%;
+    margin-top: 34px;
+    border-radius: 26px;
+    padding: 34px 24px 28px;
+  }
+
+  .login-logo-fino {
+    width: 76px;
+    height: 76px;
+    margin-bottom: 16px;
+  }
+
+  .login-header-fino h2,
+  .login-box-fino h2 {
+    font-size: 29px;
+  }
+
+  .login-box-fino .login-subtitulo {
+    font-size: 18px;
+  }
+
+  .campo-login-fino {
+    margin-bottom: 23px;
+  }
+
+  .campo-login-fino label {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .input-login-fino {
+    height: 63px;
+    min-height: 63px;
+    border-radius: 18px;
+  }
+
+  .input-login-fino input {
+    font-size: 18px;
+  }
+
+  .btn-login-fino,
+  #btnIngresar.btn-login-fino {
+    height: 69px;
+    min-height: 69px;
+    border-radius: 18px;
+    font-size: 22px;
+    margin-bottom: 22px;
+  }
+
+  .login-seguridad {
+    margin-left: 4px;
+    margin-right: 4px;
+    min-height: 73px;
+  }
+}
+
+@media (max-width: 390px) {
+  .login-screen-fino {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .login-box-fino {
+    margin-top: 26px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .login-header-fino h2,
+  .login-box-fino h2 {
+    font-size: 27px;
+  }
+
+  .login-box-fino .login-subtitulo {
+    font-size: 16px;
+  }
+
+  .input-login-fino input {
+    font-size: 16px;
+  }
+
+  .login-seguridad-texto strong,
+  .login-secundario-fino,
+  .login-secundario-fino .link-acceso {
+    font-size: 15px;
+  }
+
+  .login-seguridad-texto span {
+    font-size: 14px;
+  }
+}
+
+/* =====================================================
+   CORRECCION FINAL LOGIN - PANTALLA COMPLETA Y MAS ARRIBA
+   Quita los bordes beige del body y sube la tarjeta.
+===================================================== */
+body:has(#pantallaLogin.login-screen-fino),
+body:has(#pantallaLogin.login-screen-fino[style*="display: block"]),
+body:has(#pantallaLogin.login-screen-fino:not([style*="display: none"])) {
+  margin: 0 !important;
+  padding: 0 !important;
+  padding-top: 0 !important;
+  width: 100% !important;
+  min-height: 100dvh !important;
+  background: #f8fbff !important;
+  overflow-x: hidden !important;
+}
+
+#pantallaLogin.login-screen-fino {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 16px 22px !important;
+  background:
+    radial-gradient(circle at 94% 7%, rgba(219, 232, 250, 0.96) 0 18%, rgba(219, 232, 250, 0.56) 18.2% 31%, transparent 31.5%),
+    radial-gradient(circle at -7% 72%, rgba(222, 235, 252, 0.86) 0 20%, transparent 20.5%),
+    linear-gradient(180deg, #f9fbff 0%, #edf5ff 100%) !important;
+}
+
+#pantallaLogin.login-screen-fino::before {
+  left: 28px !important;
+  top: 74px !important;
+}
+
+#pantallaLogin.login-screen-fino::after {
+  right: -92px !important;
+  top: 2px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-bg-shape-1 {
+  right: -150px !important;
+  top: 70px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-box-fino {
+  margin-top: 72px !important;
+}
+
+@media (max-width: 520px) {
+  #pantallaLogin.login-screen-fino {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-bottom: 18px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-box-fino {
+    margin-top: 70px !important;
+    border-radius: 27px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #pantallaLogin.login-screen-fino {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-box-fino {
+    margin-top: 58px !important;
+  }
+}
+
+
+/* =====================================================
+   AJUSTE FINO FINAL - LOGIN MAS COMPACTO Y ARRIBA
+   Mantiene el mismo diseño, solo sube y compacta un poco.
+===================================================== */
+body:has(#pantallaLogin.login-screen-fino),
+body:has(#pantallaLogin.login-screen-fino[style*="display: block"]),
+body:has(#pantallaLogin.login-screen-fino:not([style*="display: none"])) {
+  margin: 0 !important;
+  padding: 0 !important;
+  padding-top: 0 !important;
+  width: 100% !important;
+  min-height: 100dvh !important;
+  background: #f8fbff !important;
+  overflow-x: hidden !important;
+}
+
+#pantallaLogin.login-screen-fino {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 16px 16px !important;
+  background:
+    radial-gradient(circle at 94% 7%, rgba(219, 232, 250, 0.96) 0 18%, rgba(219, 232, 250, 0.56) 18.2% 31%, transparent 31.5%),
+    radial-gradient(circle at -7% 72%, rgba(222, 235, 252, 0.86) 0 20%, transparent 20.5%),
+    linear-gradient(180deg, #f9fbff 0%, #edf5ff 100%) !important;
+}
+
+#pantallaLogin.login-screen-fino::before {
+  left: 28px !important;
+  top: 42px !important;
+}
+
+#pantallaLogin.login-screen-fino::after {
+  right: -92px !important;
+  top: -20px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-bg-shape-1 {
+  right: -150px !important;
+  top: 42px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-box-fino {
+  margin-top: 32px !important;
+  padding-top: 30px !important;
+  padding-bottom: 24px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-header-fino {
+  margin-bottom: 20px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-logo-fino {
+  width: 72px !important;
+  height: 72px !important;
+  margin-bottom: 14px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-logo-shield,
+#pantallaLogin.login-screen-fino .login-logo-shield svg {
+  width: 46px !important;
+  height: 46px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-linea-azul {
+  margin-top: 14px !important;
+}
+
+#pantallaLogin.login-screen-fino .campo-login-fino {
+  margin-bottom: 20px !important;
+}
+
+#pantallaLogin.login-screen-fino .campo-login-fino label {
+  margin-bottom: 10px !important;
+}
+
+#pantallaLogin.login-screen-fino .input-login-fino {
+  height: 60px !important;
+  min-height: 60px !important;
+}
+
+#pantallaLogin.login-screen-fino .btn-login-fino,
+#pantallaLogin.login-screen-fino #btnIngresar.btn-login-fino {
+  height: 64px !important;
+  min-height: 64px !important;
+  margin-bottom: 18px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-seguridad {
+  min-height: 68px !important;
+  margin-bottom: 20px !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-separador {
+  margin-bottom: 20px !important;
+}
+
+@media (max-width: 520px) {
+  #pantallaLogin.login-screen-fino {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-bottom: 14px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-box-fino {
+    margin-top: 28px !important;
+    border-radius: 27px !important;
+    padding: 28px 24px 24px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-header-fino h2,
+  #pantallaLogin.login-screen-fino .login-box-fino h2 {
+    font-size: 28px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-box-fino .login-subtitulo {
+    font-size: 17px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #pantallaLogin.login-screen-fino {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-box-fino {
+    margin-top: 22px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+}
+
+
+/* =====================================================
+   AJUSTE DEFINITIVO LOGIN COMPACTO - APP COMPLETA SUTRAN
+   Mantiene toda la app, solo corrige login:
+   - Fondo cubre todo
+   - Sin bordes laterales
+   - Login mas arriba
+   - Bloque mas compacto para entrar en pantalla movil
+===================================================== */
+
+html,
+body {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+body {
+  margin: 0 !important;
+}
+
+/* Cuando esta visible la pantalla login, anulamos padding general del body */
+body:has(#pantallaLogin.login-screen-fino) {
+  padding: 0 !important;
+  padding-top: 0 !important;
+  background: #f8fbff !important;
+}
+
+/* Pantalla login completa */
+#pantallaLogin.login-screen-fino {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 16px 16px 18px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(219, 232, 250, 0.95) 0 17%, rgba(219, 232, 250, 0.50) 17.5% 30%, transparent 30.5%),
+    radial-gradient(circle at -7% 74%, rgba(222, 235, 252, 0.82) 0 18%, transparent 18.5%),
+    linear-gradient(180deg, #f9fbff 0%, #eef6ff 100%) !important;
+}
+
+/* Puntos decorativos y circulos mas arriba */
+#pantallaLogin.login-screen-fino::before {
+  left: 30px !important;
+  top: 34px !important;
+}
+
+#pantallaLogin.login-screen-fino::after {
+  right: -98px !important;
+  top: -34px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-bg-shape-1 {
+  right: -158px !important;
+  top: 28px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-bg-shape-2 {
+  left: -120px !important;
+  bottom: -110px !important;
+}
+
+/* Tarjeta principal: mas arriba y compacta */
+#pantallaLogin.login-screen-fino .login-box-fino {
+  width: 100% !important;
+  max-width: 430px !important;
+  margin: 10px auto 0 !important;
+  padding: 24px 22px 22px !important;
+  border-radius: 28px !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: 0 20px 42px rgba(31, 55, 95, 0.13) !important;
+}
+
+/* Cabecera compacta */
+#pantallaLogin.login-screen-fino .login-header-fino {
+  margin-bottom: 16px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-logo-fino {
+  width: 66px !important;
+  height: 66px !important;
+  margin: 0 auto 12px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-logo-shield,
+#pantallaLogin.login-screen-fino .login-logo-shield svg {
+  width: 42px !important;
+  height: 42px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-logo-orbita {
+  width: 11px !important;
+  height: 11px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-header-fino h2,
+#pantallaLogin.login-screen-fino .login-box-fino h2 {
+  margin: 0 0 8px !important;
+  font-size: 26px !important;
+  line-height: 1.08 !important;
+  color: #082652 !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+}
+
+#pantallaLogin.login-screen-fino .login-box-fino .login-subtitulo {
+  margin: 0 !important;
+  font-size: 15.5px !important;
+  line-height: 1.25 !important;
+  color: #657284 !important;
+}
+
+#pantallaLogin.login-screen-fino .login-linea-azul {
+  width: 50px !important;
+  height: 5px !important;
+  margin: 12px auto 0 !important;
+  border-radius: 999px !important;
+}
+
+/* Campos compactos */
+#pantallaLogin.login-screen-fino .campo-login-fino {
+  margin-bottom: 15px !important;
+}
+
+#pantallaLogin.login-screen-fino .campo-login-fino label {
+  margin-bottom: 8px !important;
+  font-size: 17px !important;
+  line-height: 1.1 !important;
+  color: #06152b !important;
+  font-weight: 800 !important;
+}
+
+#pantallaLogin.login-screen-fino .input-login-fino {
+  height: 54px !important;
+  min-height: 54px !important;
+  border-radius: 22px !important;
+  border: 2px solid #dce4ef !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+}
+
+#pantallaLogin.login-screen-fino .input-login-icono-fino {
+  width: 62px !important;
+  min-width: 62px !important;
+  height: 44px !important;
+  margin-left: 10px !important;
+  border-radius: 16px !important;
+  background: linear-gradient(180deg, #f3f8ff 0%, #eaf3ff 100%) !important;
+}
+
+#pantallaLogin.login-screen-fino .input-login-icono-fino svg {
+  width: 23px !important;
+  height: 23px !important;
+  fill: #1f80e8 !important;
+}
+
+#pantallaLogin.login-screen-fino .input-login-fino input {
+  font-size: 17px !important;
+  height: 100% !important;
+  padding: 0 40px 0 18px !important;
+  color: #15243a !important;
+}
+
+#pantallaLogin.login-screen-fino .input-login-fino input::placeholder {
+  color: #7b8797 !important;
+}
+
+#pantallaLogin.login-screen-fino .toggle-password-fino {
+  right: 13px !important;
+}
+
+#pantallaLogin.login-screen-fino .toggle-password-fino .icono-ojo {
+  width: 24px !important;
+  height: 24px !important;
+  fill: #667386 !important;
+}
+
+/* Boton compacto */
+#pantallaLogin.login-screen-fino .btn-login-fino,
+#pantallaLogin.login-screen-fino #btnIngresar.btn-login-fino {
+  height: 58px !important;
+  min-height: 58px !important;
+  margin: 2px 0 14px !important;
+  border-radius: 18px !important;
+  font-size: 23px !important;
+  font-weight: 800 !important;
+  background: linear-gradient(90deg, #159bf8 0%, #0868e9 100%) !important;
+  box-shadow: 0 12px 22px rgba(17, 104, 233, 0.23) !important;
+}
+
+#pantallaLogin.login-screen-fino .btn-login-fino .icono-boton svg {
+  width: 27px !important;
+  height: 27px !important;
+}
+
+/* Seguridad compacta */
+#pantallaLogin.login-screen-fino .login-seguridad {
+  min-height: 58px !important;
+  margin: 0 0 14px !important;
+  padding: 9px 14px !important;
+  border-radius: 18px !important;
+  background: linear-gradient(180deg, #f2f8ff 0%, #edf6ff 100%) !important;
+  border: 1px solid rgba(195, 218, 247, 0.70) !important;
+  gap: 13px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-seguridad-icono {
+  width: 46px !important;
+  min-width: 46px !important;
+  height: 46px !important;
+  border-radius: 15px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-seguridad-icono svg {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-seguridad-texto strong {
+  font-size: 16px !important;
+  line-height: 1.15 !important;
+  color: #082652 !important;
+}
+
+#pantallaLogin.login-screen-fino .login-seguridad-texto span {
+  font-size: 14.5px !important;
+  line-height: 1.15 !important;
+  color: #5b6878 !important;
+}
+
+/* Separador y solicitud compactos */
+#pantallaLogin.login-screen-fino .login-separador {
+  margin: 0 0 13px !important;
+}
+
+#pantallaLogin.login-screen-fino .login-separador span {
+  height: 2px !important;
+  background: #dce3ef !important;
+}
+
+#pantallaLogin.login-screen-fino .login-separador em {
+  font-size: 15px !important;
+  color: #657284 !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+}
+
+#pantallaLogin.login-screen-fino .login-secundario-fino {
+  font-size: 16px !important;
+  line-height: 1.1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #111827 !important;
+}
+
+#pantallaLogin.login-screen-fino .login-secundario-fino .link-acceso {
+  font-size: 16px !important;
+  color: #0f7fed !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+}
+
+#pantallaLogin.login-screen-fino .login-secundario-fino .link-acceso svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+#pantallaLogin.login-screen-fino .mensaje-login {
+  margin-top: 8px !important;
+  min-height: 18px !important;
+  font-size: 13px !important;
+}
+
+/* Ajuste para celulares angostos */
+@media (max-width: 390px) {
+  #pantallaLogin.login-screen-fino {
+    padding-left: 13px !important;
+    padding-right: 13px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-box-fino {
+    margin-top: 8px !important;
+    padding: 22px 18px 20px !important;
+    border-radius: 26px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-header-fino h2,
+  #pantallaLogin.login-screen-fino .login-box-fino h2 {
+    font-size: 25px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-box-fino .login-subtitulo {
+    font-size: 14.5px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .campo-login-fino label {
+    font-size: 16px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .input-login-fino {
+    height: 52px !important;
+    min-height: 52px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .btn-login-fino,
+  #pantallaLogin.login-screen-fino #btnIngresar.btn-login-fino {
+    height: 56px !important;
+    min-height: 56px !important;
+    font-size: 22px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-seguridad-texto strong {
+    font-size: 15px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-seguridad-texto span {
+    font-size: 13.5px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-secundario-fino,
+  #pantallaLogin.login-screen-fino .login-secundario-fino .link-acceso {
+    font-size: 15px !important;
+  }
+}
+
+/* Alturas pequenas: compacta un poco mas para que entre completo */
+@media (max-height: 760px) {
+  #pantallaLogin.login-screen-fino {
+    padding-top: 8px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-box-fino {
+    margin-top: 4px !important;
+    padding-top: 18px !important;
+    padding-bottom: 18px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-logo-fino {
+    width: 58px !important;
+    height: 58px !important;
+    margin-bottom: 9px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-logo-shield,
+  #pantallaLogin.login-screen-fino .login-logo-shield svg {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-header-fino {
+    margin-bottom: 12px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-header-fino h2,
+  #pantallaLogin.login-screen-fino .login-box-fino h2 {
+    font-size: 24px !important;
+    margin-bottom: 5px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-box-fino .login-subtitulo {
+    font-size: 13.8px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-linea-azul {
+    margin-top: 8px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .campo-login-fino {
+    margin-bottom: 11px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .campo-login-fino label {
+    margin-bottom: 6px !important;
+    font-size: 15.5px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .input-login-fino {
+    height: 48px !important;
+    min-height: 48px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .input-login-icono-fino {
+    height: 38px !important;
+    width: 54px !important;
+    min-width: 54px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .input-login-fino input {
+    font-size: 15px !important;
+    padding-left: 14px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .btn-login-fino,
+  #pantallaLogin.login-screen-fino #btnIngresar.btn-login-fino {
+    height: 52px !important;
+    min-height: 52px !important;
+    font-size: 20px !important;
+    margin-bottom: 11px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-seguridad {
+    min-height: 52px !important;
+    padding: 7px 12px !important;
+    margin-bottom: 10px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-seguridad-icono {
+    width: 40px !important;
+    min-width: 40px !important;
+    height: 40px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-seguridad-texto strong {
+    font-size: 14px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-seguridad-texto span {
+    font-size: 12.5px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-separador {
+    margin-bottom: 10px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-secundario-fino,
+  #pantallaLogin.login-screen-fino .login-secundario-fino .link-acceso {
+    font-size: 14px !important;
+  }
+}
+
+
+/* =====================================================
+   AJUSTE FINAL PEDIDO - LOGIN COMPLETO SUTRAN
+   - Baja un poquito el bloque del login
+   - Mantiene fondo completo sin bordes
+   - Mantiene compacto para celular
+   - No cambia la lógica del sistema
+===================================================== */
+
+html,
+body {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+body {
+  margin: 0 !important;
+}
+
+/* Fondo completo cuando está la pantalla login */
+body:has(#pantallaLogin.login-screen-fino) {
+  padding: 0 !important;
+  padding-top: 0 !important;
+  background: #f8fbff !important;
+}
+
+#pantallaLogin.login-screen-fino {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 16px 16px 18px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(219, 232, 250, 0.95) 0 17%, rgba(219, 232, 250, 0.50) 17.5% 30%, transparent 30.5%),
+    radial-gradient(circle at -7% 74%, rgba(222, 235, 252, 0.82) 0 18%, transparent 18.5%),
+    linear-gradient(180deg, #f9fbff 0%, #eef6ff 100%) !important;
+}
+
+/* Tarjeta: bajada solo un poquito */
+#pantallaLogin.login-screen-fino .login-box-fino {
+  margin-top: 28px !important;
+}
+
+/* Si el celular es bajo, no se corta */
+@media (max-height: 760px) {
+  #pantallaLogin.login-screen-fino {
+    padding-top: 8px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-box-fino {
+    margin-top: 18px !important;
+  }
+}
+
+/* En celulares muy angostos */
+@media (max-width: 390px) {
+  #pantallaLogin.login-screen-fino .login-box-fino {
+    margin-top: 22px !important;
+  }
+}
+
+
+/* =====================================================
+   AJUSTE FINO ICONO LOGIN - PUNTOS IGUAL A REFERENCIA
+   - 3 puntos azules alrededor del circulo
+   - uno abajo izquierda, uno arriba derecha y uno medio derecha
+   - no cambia la logica ni los demas modulos
+===================================================== */
+
+#pantallaLogin.login-screen-fino .login-logo-fino {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+#pantallaLogin.login-screen-fino .login-logo-orbita {
+  position: absolute !important;
+  width: 9px !important;
+  height: 9px !important;
+  border-radius: 999px !important;
+  background: #1f80e8 !important;
+  box-shadow: 0 3px 7px rgba(31, 128, 232, 0.22) !important;
+  display: block !important;
+}
+
+/* Punto inferior izquierdo */
+#pantallaLogin.login-screen-fino .login-logo-orbita-1 {
+  left: 10px !important;
+  bottom: 9px !important;
+  top: auto !important;
+  right: auto !important;
+}
+
+/* Punto superior derecho */
+#pantallaLogin.login-screen-fino .login-logo-orbita-2 {
+  right: 7px !important;
+  top: 10px !important;
+  left: auto !important;
+  bottom: auto !important;
+}
+
+/* Punto medio derecho */
+#pantallaLogin.login-screen-fino .login-logo-orbita-3 {
+  right: -2px !important;
+  top: 33px !important;
+  left: auto !important;
+  bottom: auto !important;
+}
+
+@media (max-height: 760px) {
+  #pantallaLogin.login-screen-fino .login-logo-orbita {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-logo-orbita-1 {
+    left: 9px !important;
+    bottom: 8px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-logo-orbita-2 {
+    right: 6px !important;
+    top: 9px !important;
+  }
+
+  #pantallaLogin.login-screen-fino .login-logo-orbita-3 {
+    right: -1px !important;
+    top: 30px !important;
+  }
+}
+
+
