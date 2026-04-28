@@ -14,43 +14,56 @@
 <body>
 
   <!-- PANTALLA LOGIN -->
-  <div id="pantallaLogin" class="login-screen">
-    <div class="login-box">
-      <div class="login-header">
-        <div class="login-logo">
-          <span class="login-logo-icono">&#128274;</span>
+  <div id="pantallaLogin" class="login-screen login-screen-fino">
+    <div class="login-bg-shape login-bg-shape-1" aria-hidden="true"></div>
+    <div class="login-bg-shape login-bg-shape-2" aria-hidden="true"></div>
+    <div class="login-dots" aria-hidden="true"></div>
+
+    <div class="login-box login-box-fino">
+      <div class="login-header login-header-fino">
+        <div class="login-logo login-logo-fino" aria-hidden="true">
+          <span class="login-logo-orbita login-logo-orbita-a"></span>
+          <span class="login-logo-orbita login-logo-orbita-b"></span>
+          <span class="login-logo-orbita login-logo-orbita-c"></span>
+          <span class="login-logo-icono login-logo-shield">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2 5 5.05v5.85c0 4.45 2.98 8.62 7 9.85 4.02-1.23 7-5.4 7-9.85V5.05L12 2zm3.45 9.7v3.65H8.55V11.7h.8v-1.55A2.66 2.66 0 0 1 12 7.5a2.66 2.66 0 0 1 2.65 2.65v1.55h.8zm-4.62 0h2.34v-1.55A1.17 1.17 0 0 0 12 8.98a1.17 1.17 0 0 0-1.17 1.17v1.55z"/>
+            </svg>
+          </span>
         </div>
+
         <h2>Acceso al sistema</h2>
         <p class="login-subtitulo">Ingrese sus credenciales para continuar</p>
+        <div class="login-linea-azul" aria-hidden="true"></div>
       </div>
 
-      <div class="campo-login">
+      <div class="campo-login campo-login-fino">
         <label for="usuarioLogin">Usuario</label>
-        <div class="input-login">
-          <span class="input-login-icono">
+        <div class="input-login input-login-fino">
+          <span class="input-login-icono input-login-icono-fino">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"/>
+              <path d="M12 12a4.2 4.2 0 1 0-4.2-4.2A4.2 4.2 0 0 0 12 12zm0 2.1c-4.05 0-7.3 2.05-7.3 4.6v.9h14.6v-.9c0-2.55-3.25-4.6-7.3-4.6z"/>
             </svg>
           </span>
-          <input type="text" id="usuarioLogin" placeholder="Ingrese usuario" autocomplete="username">
+          <input type="text" id="usuarioLogin" placeholder="Ingrese su usuario" autocomplete="username">
         </div>
       </div>
 
-      <div class="campo-login">
+      <div class="campo-login campo-login-fino">
         <label for="claveLogin">Contraseña</label>
-        <div class="input-login password-wrapper">
-          <span class="input-login-icono">
+        <div class="input-login input-login-fino password-wrapper">
+          <span class="input-login-icono input-login-icono-fino">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-6 7.73V17a1 1 0 0 0 2 0v-1.27a2 2 0 1 0-2 0zM10 8V6a2 2 0 0 1 4 0v2z"/>
+              <path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zm-7-2a2 2 0 0 1 4 0v2h-4V7zm3 8.72V17a1 1 0 0 1-2 0v-1.28a2 2 0 1 1 2 0z"/>
             </svg>
           </span>
 
-          <input type="password" id="claveLogin" placeholder="Ingrese contraseña" autocomplete="current-password">
+          <input type="password" id="claveLogin" placeholder="Ingrese su contraseña" autocomplete="current-password">
 
           <button
             type="button"
             id="toggleClave"
-            class="toggle-password"
+            class="toggle-password toggle-password-fino"
             aria-label="Mostrar contraseña"
             aria-pressed="false"
           >
@@ -65,7 +78,7 @@
         </div>
       </div>
 
-      <button id="btnIngresar" class="btn-login-principal" type="button">
+      <button id="btnIngresar" class="btn-login-principal btn-login-fino" type="button">
         <span class="icono-boton" aria-hidden="true">
           <svg viewBox="0 0 24 24">
             <path d="M10 17v-3H3v-4h7V7l5 5-5 5zm7-12H9V3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9v-2h8V5z"/>
@@ -74,10 +87,31 @@
         <span>Acceder</span>
       </button>
 
-      <div class="login-secundario">
+      <div class="login-seguridad" aria-hidden="true">
+        <div class="login-seguridad-icono">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2 5 5.05v5.85c0 4.45 2.98 8.62 7 9.85 4.02-1.23 7-5.4 7-9.85V5.05L12 2zm-.92 12.7-2.45-2.45 1.22-1.22 1.23 1.23 3.25-3.25 1.22 1.22-4.47 4.47z"/>
+          </svg>
+        </div>
+        <div class="login-seguridad-texto">
+          <strong>Su información está protegida</strong>
+          <span>Conexión segura y cifrada</span>
+        </div>
+      </div>
+
+      <div class="login-separador" aria-hidden="true">
+        <span></span>
+        <em>o</em>
+        <span></span>
+      </div>
+
+      <div class="login-secundario login-secundario-fino">
         ¿No tiene acceso?
         <span id="btnAbrirSolicitud" class="link-acceso" role="button" tabindex="0">
           Solicitar autorización
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9.29 6.71a1 1 0 0 1 1.42 0L16 12l-5.29 5.29a1 1 0 0 1-1.42-1.42L13.17 12 9.29 8.12a1 1 0 0 1 0-1.41z"/>
+          </svg>
         </span>
       </div>
 
@@ -639,5 +673,6 @@
   <script src="script.js?v=20260412_2215"></script>
 </body>
 </html>
+
 
 
