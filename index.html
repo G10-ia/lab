@@ -524,10 +524,20 @@
 
   </div>
 
-  <div id="modalSolicitudAcceso" class="modal-solicitud" style="display:none;">
+  <div id="modalSolicitudAcceso" class="modal-solicitud modal-solicitud-fino" style="display:none;">
     <div class="modal-solicitud-backdrop" id="cerrarModalSolicitudBackdrop"></div>
-    <div class="modal-solicitud-contenido">
-      <div class="modal-solicitud-header">
+    <div class="modal-solicitud-contenido modal-solicitud-contenido-fino">
+      <div class="modal-solicitud-logo" aria-hidden="true">
+        <span class="modal-solicitud-orbita modal-solicitud-orbita-1"></span>
+        <span class="modal-solicitud-orbita modal-solicitud-orbita-2"></span>
+        <span class="modal-solicitud-orbita modal-solicitud-orbita-3"></span>
+        <span class="modal-solicitud-escudo">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2 4.5 5.2v5.7c0 4.7 3.18 9.1 7.5 10.1 4.32-1 7.5-5.4 7.5-10.1V5.2L12 2zm3.2 16h-6.4a1.3 1.3 0 0 1-1.3-1.3v-4.4A1.3 1.3 0 0 1 8.8 11h.35V9.35A2.85 2.85 0 0 1 12 6.5a2.85 2.85 0 0 1 2.85 2.85V11h.35a1.3 1.3 0 0 1 1.3 1.3v4.4a1.3 1.3 0 0 1-1.3 1.3zM10.5 11h3V9.35A1.5 1.5 0 0 0 12 7.85a1.5 1.5 0 0 0-1.5 1.5V11z"/>
+          </svg>
+        </span>
+      </div>
+      <div class="modal-solicitud-header modal-solicitud-header-fino">
         <h3>Solicitar acceso</h3>
         <p>Complete sus datos. Su solicitud será revisada dentro de las 24 horas a partir de este envío.</p>
       </div>
@@ -568,7 +578,7 @@
         </div>
       </div>
 
-      <div class="modal-solicitud-acciones">
+      <div class="modal-solicitud-acciones modal-solicitud-acciones-fino">
 
         <button id="btnEnviarSolicitud" type="button" class="btn-login">
           <span class="icono-boton" aria-hidden="true">
@@ -580,14 +590,14 @@
         </button>
 
         <div class="cancelar-link-contenedor">
-          <button id="btnCancelarSolicitud" type="button" class="cancelar-link">
-            <span class="icono-cancelar" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.7 2.88 18.3 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3z"/>
-              </svg>
-            </span>
-            <span>Cancelar</span>
-          </button>
+          <button id="btnCancelarSolicitud" type="button" class="btn-cancelar-solicitud-limpio">
+          <span class="btn-cancelar-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.41L10.59 13.41 4.29 19.71 2.88 18.3 9.17 12 2.88 5.71 4.29 4.29 10.59 10.59 16.89 4.29z"/>
+            </svg>
+          </span>
+          <span>Cancelar</span>
+        </button>
         </div>
 
       </div>
