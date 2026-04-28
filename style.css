@@ -3931,3 +3931,64 @@ input[type="time"]::-webkit-inner-spin-button {
 }
 
 
+
+
+/* AJUSTE ADMIN USUARIOS: sin ID / instalación / info dispositivo */
+.tarjeta-usuario-admin {
+  border: 1px solid #d9d9d9;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.tarjeta-usuario-admin-texto {
+  font-size: 14px;
+  line-height: 1.45;
+  color: #222;
+}
+
+.fila-fecha-vinculacion {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.usuario-admin-fecha-hora {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.usuario-admin-acciones {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+}
+
+.btn-accion-usuario-admin {
+  min-width: 0;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.14);
+}
+
+.btn-accion-usuario-admin svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  flex: 0 0 auto;
+}
+
